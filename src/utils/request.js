@@ -5,8 +5,7 @@ import {getToken} from '../utils/token'
 
 const requests = axios.create(
     {
-        //baseURL:'http://192.168.0.66:8081',
-        baseURL:'http://192.168.0.107:8088',
+        baseURL:'http://192.168.0.66:8081',
         timeout: 5000,
         headers: {'Content-Type': 'application/json'},
     }
