@@ -105,7 +105,7 @@
 
         .describe {
             height: 126.35px;
-            white-space: wrap;
+            white-space: pre-wrap;
             overflow-y: scroll;
         }
 
@@ -150,7 +150,7 @@
     }
 
     @mixin button {
-        font-size: 15 px;
+        font-size: 15px;
         font-weight: 400;
         color: rgba(255, 255, 255, 1);
         border: none;

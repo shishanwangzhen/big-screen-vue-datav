@@ -21,7 +21,7 @@ import axios from 'axios'
 Vue.prototype.$axios = axios
 
 // 引入Bus
-import Bus from './assets/bus'
+import Bus from './bus'
 Vue.prototype.$bus = Bus
 
 //引入echart

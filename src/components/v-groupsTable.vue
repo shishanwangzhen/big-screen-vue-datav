@@ -10,12 +10,12 @@
             <th>组描述</th>
             <th>
                 操作
-                <v-addDevices addTitle="组"></v-addDevices>
+                <v-addDevices addTitle="项目组" :addList="addList"></v-addDevices>
             </th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(group, index) in group" :key="group + index" :id="index === curIndex? 'bgs':''" @click="getCurindex(index)">
+        <tr v-for="(group, index) in groupArr" :key="group.id" :id="index === curIndex? 'bgs':''" @click="getCurindex(group.id,index)">
             <td>
                 <span style="padding-right: 10px">{{ index + 1 }}</span>
                 {{ group.groupName }}
@@ -23,8 +23,9 @@
             <td>{{ group.groudID }}</td>
             <td>{{ group.groupDesp }}</td>
             <td class="record">
-                <v-edit editTitle="组别" :editList="editList"></v-edit>
-                <v-delect :delectTitle="delectTitle"></v-delect>
+                <v-edit :editTitle="group.groupName" editType="项目组" :editList="editList" :Id="group.id"></v-edit>
+                <v-delect :delectTitle="group.groupName" :delectId="group.id" delectType="项目组"></v-delect>
+                <button class="details">详情</button>
             </td>
         </tr>
         </tbody>
@@ -32,35 +33,36 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     export default {
         name: "v-groupsTable",
         components:{
         },
         data(){
             return{
-                group: [
-                    {
-                        groupName: "1号小组",
-                        groudID: "123456",
-                        groupDesp: "最强小组",
-                    },
-                    {
-                        groupName: "1号小组",
-                        groudID: "123456",
-                        groupDesp: "最强小组",
-                    },
-                ],
-                addList:[],
-                editList:[],
-                delectTitle:'组名',
-                curIndex:0
+                addList:['组名','组编号'],
+                editList:['组名','组编号'],
+                curIndex:0,
+                curGroupId:''
             }
         },
         methods:{
-            getCurindex(index){
+            async getCurindex(groupId,index){
+                sessionStorage.setItem('groupId',groupId)
+                await this.$store.dispatch('userManagement/studentList',[
+                    {type:'addList'},
+                    {
+                        status:1,
+                        groupId:groupId,
+                        projectId:sessionStorage.getItem('projectId')
+                    }
+                ])
                 this.curIndex = index
-            }
-        }
+            },
+        },
+        computed:mapState({
+            groupArr:state => state.userManagement.groupArr,
+        })
     }
 </script>
 
@@ -105,17 +107,15 @@
         button {
             color: white;
             border-radius: 5px;
-            width: 42.01px;
-            height: 21.3px;
+            width: 40.01px;
+            height: 20.3px;
             border: none;
             margin-right: 10px;
-            &:first-child {
-                background: rgba(0, 186, 173, 1);
-            }
-
-            &:last-child {
-                background: rgba(216, 40, 40, 1);
-            }
+        }
+        .details{
+            background: rgba(255, 141, 26, 1);
+            &:active{
+                box-shadow: 1px 1px 1px rgba(255, 141, 26, 1);            }
         }
 
         .btn_edit {

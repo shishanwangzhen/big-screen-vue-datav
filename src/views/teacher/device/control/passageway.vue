@@ -47,7 +47,7 @@
         </table>
     </div>
 </template>
-      
+
 <script>
 export default {
     name: "app",
@@ -65,6 +65,12 @@ export default {
                 {
                     passageway: '1',
                     passagewayName: '通道',
+                    openCommand: 'FE 05 00 00 FF 00 98 35',
+                    closeCommand: 'FE 05 00 00 00 00 D9 C5'
+                },
+                {
+                    passageway: '3',
+                    passagewayName: '通道2',
                     openCommand: 'FE 05 00 00 FF 00 98 35',
                     closeCommand: 'FE 05 00 00 00 00 D9 C5'
                 }
@@ -115,7 +121,7 @@ export default {
     },
 };
 </script>
-      
+
 <style scoped lang="scss">
 body {
     background: rgb(4, 7, 47);
@@ -324,7 +330,7 @@ thead tr {
             background-size: 200px 50px;
             color: rgba(0, 213, 255, 1);
         }
-        
+
 
         .addSensor:active {
             font-size: 18px;
@@ -350,4 +356,3 @@ thead tr {
     background: transparent;
 }
 </style>
-      

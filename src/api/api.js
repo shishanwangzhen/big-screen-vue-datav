@@ -18,7 +18,7 @@ export const reqTeacherList = () => requests({method:'POST',url:'/teacher/findTe
 // 获取学生申请列表
 export const reqAplicationList = (data) => requests({method:'POST',url:'/core/student/selectStudent',data})
 
-// 学生申请同意与拒绝
+// 学生申请同意与拒绝、项目组添加学生、修改学生
 // @params status （0.待审核，1.审核通过，2.审核未通过）
 export const reqUpdateStudent = (data) => requests({method:'POST',url:'/core/student/updateStudent',data})
 
@@ -36,3 +36,19 @@ export const reqUpdateProject = (data) => requests({method:'POST',url:'/core/pro
 
 //一键清空所有项目
 export const  reqClearAllProject=(id) => requests({method:'POST',url:`/core/project/updateProjectStatusByCreatorId?creatorId=${id}`})
+
+//查看项目组列表
+export const reqFindGroup = (data) => requests({method:'POST',url:'/core/group/findGroup',data})
+
+//添加项目组
+export const reqInsertGroup = (data) => requests({method:'POST',url:'/core/group/insertGroup',data})
+
+//修改项目组
+export const reqUpdateGroup = (data) => requests({method:'POST',url:'/core/group/updateGroup',data})
+
+//删除项目组
+export const reqUpdateGroupStatus = (id) =>  requests({method:'POST',url:`/core/group/updateGroupStatus?id=${id}`})
+
+// 删除项目组中的学生
+export const reqUpdateGroupStudent = (id) =>  requests({method:'POST',url:`/core/group/updateGroupStudent?id=${id}`})
+

@@ -29,10 +29,8 @@
       <router-view></router-view>
     </div>
   </template>
-  
-  <script>
-// import {mapState} from 'vuex'
 
+  <script>
   export default {
     inject: ["reload"],
     data() {
@@ -84,7 +82,7 @@
     }
   };
   </script>
-  
+
   <style lang="scss" scoped>
   .table {
     width: 1450px;
@@ -94,13 +92,13 @@
     margin-left: 40px;
     margin-top: 10px;
   }
-  
+
   thead {
     text-align: left;
     background: rgba(12, 54, 122) !important;
     box-shadow: inset 10px 10px 20px 10px rgba(18, 142, 232, 0.34) !important;
   }
-  
+
   thead tr th {
     padding-left: 25px;
     line-height: 40px;
@@ -108,7 +106,7 @@
       display: flex;
     }
   }
-  
+
   .record {
     display: flex;
     button {
@@ -118,16 +116,16 @@
       height: 21.3px;
       border: none;
       margin-right: 10px;
-  
+
       &:first-child {
         margin-left: 20px;
         background: rgba(0, 186, 173, 1);
       }
-  
+
       &:nth-child(2) {
         background: rgba(216, 40, 40, 1);
       }
-  
+
       &:nth-child(3) {
         background: rgba(42, 130, 228, 1);
       }
@@ -136,17 +134,17 @@
       &:active {
         box-shadow: 1px 1px 1px rgba(0, 186, 173, 1);
       }
-  
+
       &:hover {
         cursor: pointer;
       }
     }
-  
+
     .btn_delete {
       &:active {
         box-shadow: 1px 1px 1px rgba(216, 40, 40, 1);
       }
-  
+
       &:hover {
         cursor: pointer;
       }
@@ -167,7 +165,7 @@
       cursor: default;
       &:active{
           text-shadow: 0 0 5px rgba(67, 207, 124, 1),0 0 5px rgba(67, 207, 124, 1),0 0 5px rgba(67, 207, 124, 1),0 0 15px rgba(67, 207, 124, 1);
-          border: 1px solid rgba(67, 207, 124, 1); 
+          border: 1px solid rgba(67, 207, 124, 1);
       }
     }
   tbody {
@@ -199,7 +197,7 @@
     text-overflow: ellipsis;
   //   text-align: left;
   }
- 
+
   table thead,
   tbody tr,
   tfoot tr,
@@ -212,7 +210,7 @@
   tr td:first-child{
     padding-left: 30px;
   }
-   
+
 //   tbody tr:nth-child(2){
 //     width: 80%;
 //   }
@@ -223,7 +221,7 @@
     height: 18px;
     /*滚动条高度*/
   }
-  
+
   /*定义滚动条轨道 内阴影+圆角*/
   ::-webkit-scrollbar-track {
     box-shadow: 0px 1px 3px #071e4a inset;
@@ -233,7 +231,7 @@
     background-color: #071e4a;
     /*滚动条的背景颜色*/
   }
-  
+
   /*定义滑块 内阴影+圆角*/
   ::-webkit-scrollbar-thumb {
     box-shadow: 0px 1px 3px #00a0e9 inset;
@@ -243,7 +241,7 @@
     background-color: #00a0e9;
     /*滚动条的背景颜色*/
   }
-  
+
   .add_device {
     margin-left: 10px;
     font-size: 11px;
@@ -257,15 +255,15 @@
     background: rgba(6, 8, 31, 1);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
   }
-  
+
   .add_device:hover {
     cursor: pointer;
   }
-  
+
   .add_device:active {
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
   }
-  
+
   .clear_project {
     height: 18px;
     width: 70px;
@@ -280,7 +278,7 @@
     color: rgba(255, 255, 255, 0.64);
     border: none;
   }
-  
+
   @mixin status {
     width: 37px;
     height: 18px;
@@ -290,17 +288,17 @@
     line-height: 15px;
     color: rgba(255, 255, 255, 1);
   }
-  
+
   .on-line {
     background: rgba(67, 207, 124, 1);
     @include status();
   }
-  
+
   .off-line {
     @include status();
     background: rgba(212, 48, 48, 1);
   }
-  
+
   .unbound {
     background: rgba(255, 141, 26, 1);
     width: 45px !important;

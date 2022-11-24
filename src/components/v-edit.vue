@@ -2,7 +2,7 @@
   <div>
     <button class="btn_edit" @click="isActive = !isActive">编辑</button>
     <div>
-     <v-editList :editType="editType" :editTitle="editTitle" :editList="editList" :projectId="projectId" v-if="isActive" @handelShow="getRes"></v-editList>
+     <v-editList :editType="editType" :editTitle="editTitle" :editList="editList" :Id="Id" v-if="isActive" @handelShow="getRes"></v-editList>
     <v-mask :isActive="isActive"></v-mask>
   </div>
   </div>
@@ -12,7 +12,7 @@
   import editList from './v-editList'
 export default {
   inject: ["reload"],
-  props: ["editType","editTitle","editList","projectId"],
+  props: ["editType","editTitle","editList","Id"],
   components:{
     'v-editList':editList
   },
@@ -28,6 +28,8 @@ export default {
       this.isActive = res
     }
   },
+  mounted() {
+  }
 };
 </script >
 

@@ -2,7 +2,7 @@
   <div>
     <div style="display:flex;align-items: baseline;justify-content: space-between">
       <div class="topLft">
-        <div class="btn">导入设备</div>
+        <div class="btn" @click="toImport">导入设备</div>
         <img src="../../assets/images/youjiantou.png" alt="">
       </div>
       <v-day></v-day>
@@ -35,9 +35,9 @@
           <td>{{ list.number }}</td>
           <td :title="list.info">{{ list.info }}</td>
           <td class="record">
-            <v-edit editType="项目" :editTitle="list.name" :editList="editList" :projectId="list.id"></v-edit>
-            <v-delect :delectTitle="delectTitle" :delectId="list.id"></v-delect>
-            <v-configuration :configurationTitle="configurationTitle"></v-configuration>
+            <v-edit editType="项目" :editTitle="list.name" :editList="editList" :Id="list.id"></v-edit>
+            <v-delect :delectTitle="`${list.name}项目组`" :delectId="list.id" delectType="项目"></v-delect>
+            <button class="configuration" @click="toCongiguration">配置</button>
           </td>
           <td>
             <span class="enter" @click="enter(list.id,list.name)">进入该项目</span>
@@ -55,7 +55,7 @@ import clearAll from '../../components/clearAll.vue'
 import { mapState } from 'vuex';
 export default {
   components: {
-    'v-clearAll':clearAll
+    'v-clearAll':clearAll,
   },
   inject: ["reload"],
   data() {
@@ -88,12 +88,28 @@ export default {
     prjecConfigaration() {
       this.isShowConfigaration = true
     },
-    enter(id,name) {
-      console.log(id,'name',name)
+    async enter(id) {
+      //存储项目id
+      sessionStorage.setItem('projectId',id)
+      // console.log('sessionStorage.getItem', sessionStorage.getItem('projectId'))
+      // await this.$store.dispatch('userManagement/findGroup',{
+      //   creatorId:sessionStorage.getItem('teacherId'),
+      //   projectId:sessionStorage.getItem('projectId')
+      // })
       this.$router.push({
         path: '/teacherPage/projectDetails'
       })
     },
+    toImport(){
+      this.$router.push({
+        path: '/teacherPage/importDevice'
+      })
+    },
+    toCongiguration(){
+      this.$router.push({
+        path: '/teacherPage/configuration'
+      })
+    }
   },
   computed: mapState({
     projectlist: state => state.project.projectList
@@ -132,30 +148,17 @@ thead tr th {
 
 .record {
   display: flex;
-
-  button {
+  .configuration {
     color: white;
     border-radius: 5px;
     width: 42.01px;
     height: 21.3px;
     border: none;
-    margin-right: 10px;
-
-    &:first-child {
-      margin-left: 20px;
-      background: rgba(0, 186, 173, 1);
-    }
-
-    &:nth-child(2) {
-      background: rgba(216, 40, 40, 1);
-    }
-
-    &:nth-child(3) {
-      background: rgba(42, 130, 228, 1);
+    background: rgba(42, 130, 228, 1);
+    &:active{
+      box-shadow: 1px 1px 1px rgba(42, 130, 228, 1);
     }
   }
-
-
   .btn_edit {
     &:active {
       box-shadow: 1px 1px 1px rgba(0, 186, 173, 1);

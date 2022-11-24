@@ -3,12 +3,15 @@
         <button class="btn_delete" @click="isActive = !isActive">删除</button>
         <div class="delect_contain_" v-show="isActive">
         <div class="delect">
-            <div class="tips">提示</div>
-            <div class="content"><i class="iconfont icon-gantanhao" style="color:rgba(255, 195, 0, 1)"></i> 是否永久删除该{{ delectTitle }}</div>
-            <div class="selctType">
-                <button @click="isActive = !isActive">取消</button>
-                <button @click="deleteItem(delectId)">删除</button>
-            </div>
+            <ul style="position: relative">
+                <li class="tips">提示</li>
+                <li class="content"><i class="iconfont icon-gantanhao" style="color:rgba(255, 195, 0, 1)"></i> 是否永久删除{{ delectTitle }}</li>
+                <li class="selctType">
+                    <button @click="isActive = !isActive">取消</button>
+                    <button @click="deleteItem(delectId)">删除</button>
+                </li>
+            </ul>
+
         </div>
         <v-mask :isActive="isActive"></v-mask>
     </div>
@@ -17,7 +20,7 @@
 
 <script>
 export default {
-    props:["delectTitle","delectId"],
+    props:["delectTitle","delectId","delectType"],
     data(){
         return{
             isActive:false
@@ -25,8 +28,17 @@ export default {
     },
     methods:{
         async deleteItem(delectId){
-            await this.$store.dispatch('project/deleteProject',delectId)
-            await this.$store.dispatch('project/projectList')
+            if(this.delectType == '项目'){
+                await this.$store.dispatch('project/deleteProject',delectId)
+                await this.$store.dispatch('project/projectList')
+            }
+           if(this.delectType == '项目组'){
+               await this.$store.dispatch('userManagement/updateGroupStatus',delectId)
+               await this.$store.dispatch('userManagement/findGroup',{
+                   creatorId:sessionStorage.getItem('teacherId'),
+                   projectId:sessionStorage.getItem('projectId')
+               })
+           }
         }
     }
 }
@@ -71,7 +83,10 @@ export default {
         margin: auto;
         width: 430px;
         height: 200px;
+        /*overflow: hidden;*/
+        white-space: pre-wrap;
         background: url(../assets/images/operation-prompt-box.png);
+        background-repeat: no-repeat;
         background-size:430px 298px ;
         text-align: left;
 
@@ -99,12 +114,12 @@ export default {
             margin-left: 40px;
             font-size: 25px;
             font-weight: 400;
+            line-height: 30px;
             color: rgba(255, 255, 255, 1);
-            margin-bottom: 50px;
         }
 
         @mixin button {
-            font-size: 15 px;
+            font-size: 15px;
             font-weight: 400;
             color: rgba(255, 255, 255, 1);
             border: none;
@@ -117,7 +132,6 @@ export default {
         .selctType {
             margin-right: 10px;
             text-align: right;
-
             button:first-child {
                 @include button();
                 background: rgba(0, 186, 173, 1);

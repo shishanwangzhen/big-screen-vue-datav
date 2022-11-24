@@ -13,6 +13,7 @@ export default new Vuex.Store({
     showunbinding:false,
     showDeletCamera:false,
     showAplication:false,
+    showDeleteStudent:false,
     curAddTitle:''
   },
   mutations: {
@@ -27,6 +28,10 @@ export default new Vuex.Store({
     },
     deletCamera(state){
       state.showDeletCamera = !state.showDeletCamera
+    },
+    deleteStudent(state){
+      state.showDeleteStudent = !state.showDeleteStudent
+      console.log('state.showDeleteStudent',state.showDeleteStudent)
     },
     changeAddTitle(state,params){
       state.curAddTitle = params

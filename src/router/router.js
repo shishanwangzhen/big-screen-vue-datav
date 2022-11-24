@@ -51,6 +51,16 @@ const routes = [{
       component: () => import("../views/teacher/project-browse-table.vue")
     },
     {
+      path: 'importDevice',
+      name:'importDevice',
+      component: () => import("../views/teacher/importDevice")
+    },
+    {
+      path: 'configuration',
+      name:'configuration',
+      component: () => import("../views/teacher/configuration")
+    },
+    {
       path: 'projectDetails',
       name: 'projectDetails',
       component: () => import("../views/teacher/navigationBar.vue"),
@@ -62,14 +72,8 @@ const routes = [{
           name: 'curProject',
           component: () => import("../views/teacher/projectItemList.vue"),
           meta: { title: '项目下拉框' },
-          redirect: '/teacherPage/projectDetails/curProject/roleTable',
+          redirect: '/teacherPage/projectDetails/curProject/manage',
           children: [
-            {
-              path: 'roleTable',
-              name: 'roleTable',
-              component: () => import("../views/teacher/mem-management/roleTable.vue"),
-              meta: { title: "角色" }
-            },
             {
               path: 'manage',
               name: 'manage',

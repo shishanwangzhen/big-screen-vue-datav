@@ -156,4 +156,7 @@ export default {
     height: 30px;
     opacity: 1;
     background: rgba(102, 255, 255, 1);
-    clip-path: polygon(0 0, 30% 0, 60% 50%, 30% 100%
+    clip-path: polygon(0 0, 30% 0, 60% 50%, 30% 100%, 0 100%);
+  }
+}
+</style>

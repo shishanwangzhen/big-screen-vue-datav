@@ -29,7 +29,7 @@
     <router-view></router-view>
   </div>
 </template>
-  
+
 <script>
 import msgreminder from "../../components/msg-reminder.vue";
 export default {
@@ -53,7 +53,7 @@ export default {
         alert('退出失败')
       }
     },
- 
+
     isShowMsg() {
 
     },
@@ -82,10 +82,9 @@ export default {
     //   }
     // }
   }
-  // },
 };
 </script>
-  
+
 <style lang="scss" scoped>
 .systemName_contain {
   width: 1920px;

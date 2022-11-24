@@ -1,4 +1,5 @@
 <template>
+    <div>
     <table class="tableRight">
         <thead>
         <tr>
@@ -15,82 +16,78 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(curStu, index) in curStu" :key="index" :class="index === curIndex ? 'bg' : ''" @click="getIndex(index)">
+        <tr v-for="(curStu, index) in addStudentList" :key="curStu.id" :class="index === curIndex ? 'bg' : ''" @click="getIndex(index)">
             <td>
                 <span style="padding-right: 10px">{{ index + 1 }}</span>
-                {{ curStu.stuName }}
+                {{ curStu.account }}
             </td>
-            <td>{{ curStu.role }}</td>
+            <td>{{ curStu.role=='1'?'组长':'组员' }}</td>
             <td class="deviceList">
-              <span
-                      v-for="(device, index) in curStu.device"
-                      :key="device + index"
-              >
-                {{ device }}
+              <span>
+                设备
               </span>
             </td>
             <td class="operation">
-                <button class="btn_lajitong" @click="delect('学生')">
+                <button class="btn_lajitong" @click="delect(curStu.account,curStu.id)">
                     <i class="iconfont icon-lajitong"></i>
                 </button>
                 <button class="btn_tianxie">
                     <i class="iconfont icon-tianxie" @click="edit('学生')"></i>
                 </button>
-                <button class="btn_gantanhao" >
-                    <i class="iconfont icon-gantanhao-xianxingyuankuang"></i>
-                </button>
             </td>
         </tr>
         </tbody>
     </table>
+        <v-deleteStudent :studentName="studentName" :studentId="studentId" ></v-deleteStudent>
+    </div>
 </template>
 
 <script>
+    import {mapState} from 'vuex'
+    import deleteStudent from '_c/v-deleteStudent'
     export default {
         name: "v-groupsStuedentList",
+        components:{
+            'v-deleteStudent':deleteStudent
+        },
         data(){
             return{
-                curStu: [
-                    {
-                        stuName: "张晓话",
-                        role: "普通用户",
-                        device: [
-                            "采集器1",
-                            "采集器2",
-                            "采集器3",
-                            "采集器1",
-                            "采集器2",
-                            "采集器3",
-                            "采集器1",
-                            "采集器2",
-                            "采集器3",
-                            "采集器1",
-                            "采集器2",
-                            "采集器3",
-                        ],
-                    },
-                    {
-                        stuName: "张晓话",
-                        role: "普通用户",
-                        device: ["采集器1", "采集器2", "采集器3"],
-                    },
-                    {
-                        stuName: "张晓话",
-                        role: "普通用户",
-                        device: ["采集器1", "采集器2", "采集器3"],
-                    },
-                ],
                 curIndex:0,
+                groubId:'',
+                studentName:'',
+                studentId:''
             }
         },
         methods:{
             getIndex(index){
                 this.curIndex = index
             },
-            delect(){},
+            delect(name,id){
+                console.log('lalalla')
+                this.$store.commit('deleteStudent')
+                this.studentName = name
+                this.studentId = id
+            },
             edit(){},
+            async getStudentMsgList(){
+                await this.$store.dispatch('userManagement/studentList',[
+                    {type:'addList'},
+                    {
+                    status:1,
+                    groupId:sessionStorage.getItem('groupId'),
+                    projectId:sessionStorage.getItem('projectId')
+                }])
+            }
+        },
+        computed:{
+            ...mapState({
+                groupId:state => state.userManagement.curGroupId,
+                addStudentList: state => state.userManagement.addStudentList
+            }),
+        },
+        mounted() {
+            this.getStudentMsgList()
         }
-
     }
 </script>
 

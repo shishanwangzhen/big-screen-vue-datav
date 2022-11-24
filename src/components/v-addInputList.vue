@@ -14,13 +14,22 @@
         <option value="" disabled selected>选择协议类型</option>
       </select>
     </div>
-<!--    <div class="containBox" v-if="isShowProjectItem">-->
-<!--      <span>管理员</span>-->
-<!--      <select class="itemNo addcommon selectadmin" v-model="selectAdmin" required>-->
-<!--        <option value="" disabled selected>管理员选择</option>-->
-<!--        <option :value="adminId">{{ curCreator }}</option>-->
-<!--      </select>-->
-<!--    </div>-->
+    <div class="containBox" v-if="addTitle == '学生'">
+      <span>学生选择</span>
+      <select class="itemNo addcommon" v-model="curStudentId">
+        <option value="" disabled selected>选择学生</option>
+        <option v-for="item in studentList" :key="item.id" :value="item.id">{{item.account}}</option>
+      </select>
+    </div>
+    <div class="containBox"  v-if="addTitle == '学生'" >
+      <span>角色</span>
+      <select class="itemNo addcommon" v-model="role">
+        <option value="" disabled selected>选择角色</option>
+        <option value="1">组长</option>
+        <option value="2" selected>组员</option>
+
+      </select>
+    </div>
     <div class="containBox" v-if="desp">
       <span>描述</span>
       <div contenteditable="true" class="describe addcommon"></div>
@@ -44,14 +53,19 @@ export default {
       desp: false,
       curCreator: sessionStorage.getItem("teacherAccount"),
       adminId: sessionStorage.getItem("teacherId"),
+      projectId:sessionStorage.getItem('projectId'),
       selectAdmin: "",
       addListArr: [],
-      addListObj: {
-        name: "",
-        number: "",
-        creatorId: "",
-        info: "",
+      addListObj: {},
+      projectNameArr:[],
+      projectIdArr:[],
+      fn:function async(addListObj,addListArr) {
+        Object.keys(addListObj).map((i, index) => {
+          return (addListObj[i] = addListArr[index]);
+        });
       },
+      role:'',
+      curStudentId:''
     };
   },
   methods: {
@@ -59,6 +73,13 @@ export default {
       this.$emit('cancel',false)
     },
     async submit() {
+      this.addListArr = [];
+      //获取添加的输入框节点
+      let dom = document.getElementsByClassName("addcommon");
+      console.log('dom',dom)
+      dom.forEach(element=> {
+        this.addListArr.push(element.innerText)
+      });
       if(this.addTitle == '项目'){
         this.addListObj = {
           name: "",
@@ -66,54 +87,84 @@ export default {
           creatorId: "",
           info: "",
         }
-        //获取添加的输入框节点
-        let dom = document.getElementsByClassName("addcommon");
-        dom.forEach(element=> {
-          this.addListArr.push(element.innerText)
-        });
         // 将数组的值一一填到对象中
-        Object.keys(this.addListObj).map((i, index) => {
-          return (this.addListObj[i] = this.addListArr[index]);
-        });
+        this.fn(this.addListObj,this.addListArr)
         this.addListObj["creatorId"] = this.adminId;
-        if(this.addListObj.name !== '' || this.addListObj.number !== ''){
+        if(this.addListObj.name !== '' && this.addListObj.number !== '' && !this.projectNameArr.includes(this.addListObj.name) && !this.projectIdArr.includes(this.addListObj.number) ){
           await this.$store.dispatch("project/creatProject", this.addListObj);
           await this.$store.dispatch('project/projectList')
           this.$emit('cancel',false)
         }else {
-                  this.$message({
-                    message:'输入框未填写完',
-                    type:'warning'
-                  })
-                }
-        // this.projectBasicInfo.map(item => {
-        //   Object.keys(item).map(async i => {
-        //     if(item['number'] == this.addListObj[i]){
-        //       console.log(2222)
-        //       return
-        //     }else {
-        //       this.addListObj["creatorId"] = this.adminId;
-        //       if(this.addListObj.name !== '' || this.addListObj.number !== ''){
-        //         await this.$store.dispatch("project/creatProject", this.addListObj);
-        //         await this.$store.dispatch('project/projectList')
-        //       }else {
-        //         this.$message({
-        //           message:'输入框未填写完',
-        //           type:'warning'
-        //         })
-        //       }
-        //       return
-        //     }
-        //   })
-        // })
-
+          this.$message({
+            message:'输入框未填写完/项目名称和项目编号存在重复',
+            type:'warning'
+          })
+         }
       }
-      this.addListArr = [];
-
+      if(this.addTitle == "项目组"){
+        this.addListObj = {
+          name:'',
+          number: "",
+          info: "",
+          projectId:'',
+          creatorId: '',
+        }
+        this.fn(this.addListObj,this.addListArr)
+        this.addListObj['projectId'] = this.projectId
+        this.addListObj['creatorId'] = this.adminId
+        if(this.addListObj.name !== '' && this.addListObj.number !== ''&& !this.projectNameArr.includes(this.addListObj.name) && !this.projectIdArr.includes(this.addListObj.number) ){
+          await this.$store.dispatch('userManagement/insertGroup',this.addListObj)
+          this.$emit('cancel',false)
+          await this.$store.dispatch('userManagement/findGroup',{
+            creatorId:sessionStorage.getItem('teacherId'),
+            projectId:sessionStorage.getItem('projectId')
+          })
+        }else {
+          this.$message({
+            message:'输入框未填写完/项目组名称和项目组编号存在重复',
+            type:'warning'
+          })
+        }
+      }
+      if(this.addTitle == '学生'){
+        this.addListObj = {
+          groupId: '',
+          id: '',
+          projectId: '',
+          role: '',
+        }
+        if(this.role !== '' && this.curStudentId !== ''){
+          this.addListObj['id'] = this.curStudentId
+          this.addListObj['role'] = this.role
+          this.addListObj['projectId'] = this.projectId
+          this.addListObj['groupId'] = sessionStorage.getItem('groupId')
+          this.$store.dispatch('userManagement/changeStudentList',this.addListObj)
+          this.$emit('cancel',false)
+          await this.$store.dispatch('userManagement/studentList',[
+            {type:'addList'},
+            {
+            status:1,
+            groupId:sessionStorage.getItem('groupId'),
+            projectId:sessionStorage.getItem('projectId')
+             }
+          ])
+        }
+      }
     },
+    async getStudentList(){
+      this.$store.dispatch('userManagement/studentList',[
+        {type:'apllicationLsit'},
+         {
+          status:1,
+          creatorId:sessionStorage.getItem('teacherId')
+        }
+      ])
+    }
   },
   computed:mapState({
-    projectBasicInfo: state=> state.project.projectBasicInfo
+    projectBasicInfo: state=> state.project.projectBasicInfo,
+    studentList: state => state.userManagement.studentList,
+    groupInfo:state => state.userManagement.groupArr
   }),
   beforeMount() {
     if (this.addTitle == "采集器") {
@@ -128,13 +179,29 @@ export default {
     }else if(this.addTitle == "控制器"){
       this.desp = true;
       this.isShowCaiijiqiItem = true;
+    }else if(this.addTitle == "项目组"){
+      this.desp = true;
+    }else if(this.addTitle == "学生"){
+      this.desp = true;
     }else {
       this.desp = false;
     }
 
   },
   mounted() {
-    console.log('projectList222',this.projectBasicInfo)
+    if(this.addTitle == "项目"){
+      this.projectBasicInfo.forEach(el => {
+        this.projectNameArr.push(el.name)
+        this.projectIdArr.push(el.number)
+      })
+    }
+    if(this.addTitle == "项目组"){
+      this.groupInfo.forEach(el => {
+        this.projectNameArr.push(el.groupName)
+        this.projectIdArr.push(el.groudID)
+      })
+    }
+    this.getStudentList()
   },
 };
 </script>
@@ -278,4 +345,7 @@ export default {
 
   button:active {
     font-size: 18px;
-    box-shadow: inset 0px -6px 4px
+    box-shadow: inset 0px -6px 4px 0px rgba(255, 255, 255, 0.25);
+  }
+}
+</style>

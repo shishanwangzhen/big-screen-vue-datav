@@ -124,7 +124,7 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(3, 72, 80, 0.5);
-    width: 708px;
+    width: 720px;
     height: 741px;
     border-radius: 20px;
     .specific-equipment {

@@ -44,7 +44,7 @@
 
     export default {
         name: "v-editList",
-        props: ["editType","editTitle","editList","projectId"],
+        props: ["editType","editTitle","editList","Id"],
         data(){
             return{
                 despBox:false,
@@ -52,14 +52,16 @@
                 isShowProjectItem:false,
                 curCreator: sessionStorage.getItem("teacherAccount"),
                 adminId: sessionStorage.getItem("teacherId"),
+                curProjectId:sessionStorage.getItem('projectId'),
                 selectAdmin:'',
                 addListArr:[],
-                addListObj:{
-                    name: '',
-                    number:'',
-                    creatorId:' ',
-                    info: '',
-                    id:'' ,
+                addListObj:{},
+                fn: function (addListObj,addListArr) {
+                    //获取添加的输入框节点
+                    // 将数组的值一一填到对象中
+                    Object.keys(addListObj).map((i, index) => {
+                        return (addListObj[i] = addListArr[index]);
+                    });
                 }
             }
         },
@@ -68,30 +70,59 @@
                 this.$emit('handelShow',false)
             },
             async submit() {
-                if(this.editType == '项目'){
-                    //获取添加的输入框节点
-                    let dom = document.getElementsByClassName("editcommon");
-                    dom.forEach(element=> {
-                        this.addListArr.push(element.innerText)
-                    });
-                    // 将数组的值一一填到对象中
-                    Object.keys(this.addListObj).map((i, index) => {
-                        return (this.addListObj[i] = this.addListArr[index]);
-                    });
-                    this.addListObj["creatorId"] = this.adminId;
-                    this.addListObj["id"] = this.projectId
-                    // console.log('arr',this.addListArr)
-                    // console.log('this.addListObj',this.addListObj)
-                    await this.$store.dispatch('project/updateProject',this.addListObj)
-                    await this.$store.dispatch('project/projectList')
-                }
                 this.addListArr = [];
+                let dom = document.getElementsByClassName("editcommon");
+                dom.forEach(element=> {
+                    this.addListArr.push(element.innerText)
+                });
+                if(this.editType == '项目'){
+                    this.addListObj={
+                        name: '',
+                        number:'',
+                        creatorId:' ',
+                        info: '',
+                        id:'' ,
+                    }
+                    this.fn(this.addListObj,this.addListArr)
+                    this.addListObj["creatorId"] = this.adminId;
+                    console.log('项目id',this.id)
+                    this.addListObj["id"] = this.Id
+                    await this.$store.dispatch('project/updateProject',this.addListObj)
+                    this.$emit('handelShow',false)
+                    await this.$store.dispatch('project/projectList')
+
+                }
+                if(this.editType == '项目组'){
+                    this.addListObj={
+                        name: '',
+                        number:'',
+                        info: '',
+                        id:'',
+                        creatorId:' ',
+                        projectId:'' ,
+                    }
+                    this.fn(this.addListObj,this.addListArr)
+                    this.addListObj["creatorId"] = this.adminId;
+                    this.addListObj["projectId"] = this.curProjectId
+                    this.addListObj["id"] = this.Id
+                    console.log('this.addListObj',this.addListObj)
+                    await this.$store.dispatch('userManagement/updateGroup',this.addListObj)
+                    this.$emit('handelShow',false)
+                    await this.$store.dispatch('userManagement/findGroup',{
+                        creatorId:this.adminId,
+                        projectId:this.projectId
+                    })
+                }
             },
         },
         mounted() {
             if(this.editType == '项目'){
                 this.isShowProjectItem = true
                 this.despBox = true
+            }else if(this.editType == '项目组'){
+                this.despBox = true
+            }else {
+                this.despBox = false
             }
         }
     }
