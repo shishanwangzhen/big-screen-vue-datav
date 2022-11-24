@@ -4,7 +4,7 @@ import { getToken } from '../utils/token'
 
 Vue.use(Router)
 
-// 这个是为了避免一个报错
+//  这个是为了避免一个报错
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => console.log("路由跳转错误", err))
