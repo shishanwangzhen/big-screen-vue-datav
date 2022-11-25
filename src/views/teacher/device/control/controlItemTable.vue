@@ -14,7 +14,7 @@
           <th>备注</th>
           <th >
             操作
-            <v-addDevices :addTitle="addTitle" :addList="addList"></v-addDevices>
+            <v-addDevices :addTitle="addTitle" ></v-addDevices>
           </th>
         </tr>
       </thead>

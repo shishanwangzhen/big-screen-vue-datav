@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import user from './user'
 import project from "./project"
 import userManagement from './userManagement'
+import caijiqi from './caijiqi'
+import decoder from './docoder'
 
 Vue.use(Vuex)
 
@@ -14,6 +16,7 @@ export default new Vuex.Store({
     showDeletCamera:false,
     showAplication:false,
     showDeleteStudent:false,
+    showEdeitStudent:false,
     curAddTitle:''
   },
   mutations: {
@@ -33,6 +36,9 @@ export default new Vuex.Store({
       state.showDeleteStudent = !state.showDeleteStudent
       console.log('state.showDeleteStudent',state.showDeleteStudent)
     },
+    editStudent(state){
+      state.showEdeitStudent = !state.showEdeitStudent
+    },
     changeAddTitle(state,params){
       state.curAddTitle = params
     },
@@ -46,6 +52,8 @@ export default new Vuex.Store({
   modules: {
     user,
     project,
-    userManagement
+    userManagement,
+    caijiqi,
+    decoder
   }
 })

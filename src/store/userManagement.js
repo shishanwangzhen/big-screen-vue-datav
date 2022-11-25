@@ -13,8 +13,10 @@ const state = {
 const mutations = {
     GETFINDGROUP(state,data){
         state.groupArr = []
-        if(data.resData != []){
+        if(data.resData.length !== 0){
+            console.log('data.resData22222',data.resData)
             let res = data.resData.map(el => {
+                console.log('项目组id',el.id)
                 state.groupArr.push({
                     groupName:el.name,
                     groudID:el.number,
@@ -27,6 +29,7 @@ const mutations = {
         }
         sessionStorage.setItem('groupId',0)
         state.projectId = data.projectId
+        
     },
     GETINSERTGROUP(state,data){
         state.code = data
@@ -38,7 +41,7 @@ const mutations = {
         state.code = data
     },
     GETSTUDENTLIST(state,data){
-        console.log('result.p2pdata',data)
+        console.log('这是结果result.p2pdata',data)
         // 获取申请通过的学生列表
         if(data.type == 'apllicationLsit'){
             state.studentList = []
@@ -53,16 +56,17 @@ const mutations = {
         if(data.type == 'addList'){
             state.addStudentList = []
             data.res.map(el => {
+                console.log('hahhaid',el.id)
                 state.addStudentList.push({
                     id:el.id,
                     account:el.account,
                     role:el.role
                 })
             })
+            console.log('state.addStudentList',state.addStudentList)
+            
+            
         }
-        console.log('state.addStudentList',state.addStudentList)
-
-
     },
     GETCHANGESTUDENTLIST(){
         // state.code = data

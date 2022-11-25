@@ -54,28 +54,30 @@
           <ul>
             <li>
               <span>名称：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>ID：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>型号：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>厂商：</span>
               <select name="" id="">
-                <option value="">1</option>
-                <option value="">1</option>
+                <option value="">厂家A</option>
+                <option value="">厂家B</option>
               </select>
             </li>
             <li>
               <span>协议类型：</span>
               <select name="" id="">
-                <option value="">1</option>
-                <option value="">1</option>
+                <option value="">TCP</option>
+                <option value="">MQTT</option>
+                <option>CoAP</option>
+                <option>HTTP</option>
               </select>
             </li>
             <li>
@@ -141,8 +143,6 @@ export default {
     }
   },
   beforeMount() {
-    this.$store.dispatch("roleTableList");
-    console.log(this.arrroleTableList);
   },
   computed: {
     ...mapState(["arrroleTableList"]),

@@ -48,21 +48,35 @@
         },
         methods:{
             async getCurindex(groupId,index){
+                console.log('我来看看学生列表')
                 sessionStorage.setItem('groupId',groupId)
+                this.getStudentList()
+                this.curIndex = index
+            },
+            async getStudentList(){
                 await this.$store.dispatch('userManagement/studentList',[
                     {type:'addList'},
                     {
                         status:1,
-                        groupId:groupId,
+                        groupId:sessionStorage.getItem('groupId'),
                         projectId:sessionStorage.getItem('projectId')
                     }
                 ])
-                this.curIndex = index
             },
+            async getGroupArr(){
+                await this.$store.dispatch('userManagement/findGroup',{
+                    creatorId:sessionStorage.getItem('teacherId'),
+                    projectId:sessionStorage.getItem('projectId')
+                })
+            }
         },
         computed:mapState({
             groupArr:state => state.userManagement.groupArr,
-        })
+        }),
+        mounted(){
+            this.getGroupArr()
+            this.getStudentList()
+        }
     }
 </script>
 

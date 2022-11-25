@@ -52,3 +52,17 @@ export const reqUpdateGroupStatus = (id) =>  requests({method:'POST',url:`/core/
 // 删除项目组中的学生
 export const reqUpdateGroupStudent = (id) =>  requests({method:'POST',url:`/core/group/updateGroupStudent?id=${id}`})
 
+// 添加采集设备
+export const reqInsertCollector = (data) => requests({method:'POST',url:'/core/Collector/insertCollector',data})
+
+// 查询采集器
+export const reqFindCollector = (data) => requests({method:'POST',url:'/core/Collector/findCollector',data})
+
+// 查询解码器
+export const reqFindDecoder = (data) => requests({method:'POST',url:'/core/decoder/findDecoder',data})
+
+
+
+
+
+

@@ -12,17 +12,10 @@
                 <option :value="adminId">{{ curCreator }}</option>
             </select>
         </div>
-        <div class="containBox" v-if="selectOption">
+        <div class="containBox" v-if="editType == '采集器'">
             <span >解码器</span>
-            <select class="itemNo editcommon select">
-                <option value="" disabled selected>选择厂商</option>
-                <option value="">1</option>
-                <option value="">2</option>
-                <option value="">3</option>
-                <option value="">4</option>
-            </select>
-            <select name=""  class="itemNo editcommon select">
-                <option value="" disabled selected>选择协议类型</option>
+            <select class="itemNo editcommon ">
+                <option value="" disabled selected>选择解码器</option>
                 <option value="">1</option>
                 <option value="">2</option>
                 <option value="">3</option>
@@ -120,6 +113,8 @@
                 this.isShowProjectItem = true
                 this.despBox = true
             }else if(this.editType == '项目组'){
+                this.despBox = true
+            }else if(this.editType == '采集器'){
                 this.despBox = true
             }else {
                 this.despBox = false

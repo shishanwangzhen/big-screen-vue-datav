@@ -31,7 +31,7 @@
           <td>{{ item.EN }}</td>
           <td>{{ item.unit }}</td>
           <td class="record">
-            <v-edit :editTitle="editTitle" :editType="editType" :editList="editList"></v-edit>
+            <v-edit :editTitle="editTitle"  :editList="editList"></v-edit>
             <v-delect :delectTitle="delectTitle"></v-delect>
           </td>
         </tr>

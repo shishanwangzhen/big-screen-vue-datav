@@ -345,6 +345,8 @@ table thead {
   height: 270px;
   margin: 10px 20px 20px 20px;
   .stuMsg {
+    display: flex;
+    color:#fff ;
   }
   .hasDevice {
   }

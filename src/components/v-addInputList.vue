@@ -3,31 +3,38 @@
     <div class="projectNameTitele">添加{{ addTitle }}</div>
     <div class="containBox" v-for="(list, index) in addList" :key="index">
       <span>{{ list }}</span>
-      <div contenteditable="true" class="itemNo addcommon" ></div>
+      <input class="itemNo addcommon" ref="getValue" />
+    </div>
+    <div class="containBox" v-if="isShowCaiijiqiItem">
+      <span v-if="addTitle == '采集器'">采集器</span>
+      <span v-else>控制器</span>
+      <select class="itemNo addcommon" v-model="curControl">
+        <option value="" disabled selected v-if="addTitle == '采集器'">选择采集器</option>
+        <option value="" disabled selected v-else>选择控制器</option>
+      </select>
     </div>
     <div class="containBox" v-if="isShowCaiijiqiItem">
       <span>解码器</span>
-      <select class="itemNo  selectDecoder">
-        <option value="" disabled selected>选择厂商</option>
-      </select>
-      <select class="itemNo selectDecoder">
-        <option value="" disabled selected>选择协议类型</option>
+      <select class="itemNo addcommon" v-model="curDecoder">
+        <option value="" disabled selected>选择解码器</option>
+        <option v-for="item in decoderArr" :key="item.id" value="item.id">{{item.name}}</option>
       </select>
     </div>
     <div class="containBox" v-if="addTitle == '学生'">
       <span>学生选择</span>
       <select class="itemNo addcommon" v-model="curStudentId">
         <option value="" disabled selected>选择学生</option>
-        <option v-for="item in studentList" :key="item.id" :value="item.id">{{item.account}}</option>
+        <option v-for="item in studentList" :key="item.id" :value="item.id">
+          {{ item.account }}
+        </option>
       </select>
     </div>
-    <div class="containBox"  v-if="addTitle == '学生'" >
+    <div class="containBox" v-if="addTitle == '学生'">
       <span>角色</span>
       <select class="itemNo addcommon" v-model="role">
         <option value="" disabled selected>选择角色</option>
         <option value="1">组长</option>
         <option value="2" selected>组员</option>
-
       </select>
     </div>
     <div class="containBox" v-if="desp">
@@ -42,7 +49,7 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
+import { mapState } from "vuex";
 export default {
   props: ["addTitle", "addList"],
   inject: ["reload"],
@@ -53,118 +60,156 @@ export default {
       desp: false,
       curCreator: sessionStorage.getItem("teacherAccount"),
       adminId: sessionStorage.getItem("teacherId"),
-      projectId:sessionStorage.getItem('projectId'),
+      projectId: sessionStorage.getItem("projectId"),
       selectAdmin: "",
       addListArr: [],
       addListObj: {},
-      projectNameArr:[],
-      projectIdArr:[],
-      fn:function async(addListObj,addListArr) {
+      projectNameArr: [],
+      projectIdArr: [],
+      curDecoder:'',
+      curControl:'',
+      fn: function async(addListObj, addListArr) {
         Object.keys(addListObj).map((i, index) => {
           return (addListObj[i] = addListArr[index]);
         });
       },
-      role:'',
-      curStudentId:''
+      role: "",
+      curStudentId: "",
     };
   },
   methods: {
     cancel() {
-      this.$emit('cancel',false)
+      this.$emit("cancel", false);
     },
     async submit() {
       this.addListArr = [];
       //获取添加的输入框节点
-      let dom = document.getElementsByClassName("addcommon");
-      console.log('dom',dom)
-      dom.forEach(element=> {
-        this.addListArr.push(element.innerText)
-      });
-      if(this.addTitle == '项目'){
+      if (this.addTitle == "项目") {
+        let dom = this.$refs.getValue;
+        dom.forEach((element) => {
+          this.addListArr.push(element.value);
+        });
         this.addListObj = {
           name: "",
           number: "",
           creatorId: "",
           info: "",
-        }
+        };
         // 将数组的值一一填到对象中
-        this.fn(this.addListObj,this.addListArr)
+        this.fn(this.addListObj, this.addListArr);
         this.addListObj["creatorId"] = this.adminId;
-        if(this.addListObj.name !== '' && this.addListObj.number !== '' && !this.projectNameArr.includes(this.addListObj.name) && !this.projectIdArr.includes(this.addListObj.number) ){
+        if (
+          this.addListObj.name !== "" &&
+          this.addListObj.number !== "" &&
+          !this.projectNameArr.includes(this.addListObj.name) &&
+          !this.projectIdArr.includes(this.addListObj.number)
+        ) {
           await this.$store.dispatch("project/creatProject", this.addListObj);
-          await this.$store.dispatch('project/projectList')
-          this.$emit('cancel',false)
-        }else {
+          await this.$store.dispatch("project/projectList");
+          this.$emit("cancel", false);
+        } else {
           this.$message({
-            message:'输入框未填写完/项目名称和项目编号存在重复',
-            type:'warning'
-          })
-         }
+            message: "输入框未填写完/项目名称和项目编号存在重复",
+            type: "warning",
+          });
+        }
       }
-      if(this.addTitle == "项目组"){
+      if (this.addTitle == "项目组") {
+        let dom = this.$refs.getValue;
+        dom.forEach((element) => {
+          this.addListArr.push(element.value);
+        });
         this.addListObj = {
-          name:'',
+          name: "",
           number: "",
           info: "",
-          projectId:'',
-          creatorId: '',
-        }
-        this.fn(this.addListObj,this.addListArr)
-        this.addListObj['projectId'] = this.projectId
-        this.addListObj['creatorId'] = this.adminId
-        if(this.addListObj.name !== '' && this.addListObj.number !== ''&& !this.projectNameArr.includes(this.addListObj.name) && !this.projectIdArr.includes(this.addListObj.number) ){
-          await this.$store.dispatch('userManagement/insertGroup',this.addListObj)
-          this.$emit('cancel',false)
-          await this.$store.dispatch('userManagement/findGroup',{
-            creatorId:sessionStorage.getItem('teacherId'),
-            projectId:sessionStorage.getItem('projectId')
-          })
-        }else {
+          projectId: "",
+          creatorId: "",
+        };
+        this.fn(this.addListObj, this.addListArr);
+        this.addListObj["projectId"] = this.projectId;
+        this.addListObj["creatorId"] = this.adminId;
+        if (
+          this.addListObj.name !== "" &&
+          this.addListObj.number !== "" &&
+          !this.projectNameArr.includes(this.addListObj.name) &&
+          !this.projectIdArr.includes(this.addListObj.number)
+        ) {
+          await this.$store.dispatch(
+            "userManagement/insertGroup",
+            this.addListObj
+          );
+          this.$emit("cancel", false);
+          await this.$store.dispatch("userManagement/findGroup", {
+            creatorId: sessionStorage.getItem("teacherId"),
+            projectId: sessionStorage.getItem("projectId"),
+          });
+        } else {
           this.$message({
-            message:'输入框未填写完/项目组名称和项目组编号存在重复',
-            type:'warning'
-          })
+            message: "输入框未填写完/项目组名称和项目组编号存在重复",
+            type: "warning",
+          });
         }
       }
-      if(this.addTitle == '学生'){
+      if (this.addTitle == "学生") {
         this.addListObj = {
-          groupId: '',
-          id: '',
-          projectId: '',
-          role: '',
-        }
-        if(this.role !== '' && this.curStudentId !== ''){
-          this.addListObj['id'] = this.curStudentId
-          this.addListObj['role'] = this.role
-          this.addListObj['projectId'] = this.projectId
-          this.addListObj['groupId'] = sessionStorage.getItem('groupId')
-          this.$store.dispatch('userManagement/changeStudentList',this.addListObj)
-          this.$emit('cancel',false)
-          await this.$store.dispatch('userManagement/studentList',[
-            {type:'addList'},
+          groupId: "",
+          id: "",
+          projectId: "",
+          role: "",
+        };
+        if (this.role !== "" && this.curStudentId !== "") {
+          // 添加学生
+          this.addListObj["id"] = this.curStudentId;
+          this.addListObj["role"] = this.role;
+          this.addListObj["projectId"] = this.projectId;
+          this.addListObj["groupId"] = sessionStorage.getItem("groupId");
+          await this.$store.dispatch(
+            "userManagement/changeStudentList",
+            this.addListObj
+          );
+          this.$emit("cancel", false);
+          await this.$store.dispatch("userManagement/studentList", [
+            { type: "addList" },
             {
-            status:1,
-            groupId:sessionStorage.getItem('groupId'),
-            projectId:sessionStorage.getItem('projectId')
-             }
-          ])
+              status: 1,
+              groupId: sessionStorage.getItem("groupId"),
+              projectId: sessionStorage.getItem("projectId"),
+            },
+          ]);
         }
+      }
+      if (this.addTitle == "采集器") {
+        let dom = this.$refs.getValue;
+        console.log('采集器dom', dom)
+        dom.forEach((element) => {
+          this.addListArr.push(element.value);
+        });
+        this.addListObj = {
+          name: "",
+          number: "",
+          model: "",
+          decoderId: "",
+          remarks:''
+        }
+        await this.$store.dispatch('caijiqi/insertCollector', this.addListObj)
       }
     },
-    async getStudentList(){
-      this.$store.dispatch('userManagement/studentList',[
-        {type:'apllicationLsit'},
-         {
-          status:1,
-          creatorId:sessionStorage.getItem('teacherId')
-        }
-      ])
-    }
+    async getStudentList() {
+      this.$store.dispatch("userManagement/studentList", [
+        { type: "apllicationLsit" },
+        {
+          status: 1,
+          creatorId: sessionStorage.getItem("teacherId"),
+        },
+      ]);
+    },
   },
-  computed:mapState({
-    projectBasicInfo: state=> state.project.projectBasicInfo,
-    studentList: state => state.userManagement.studentList,
-    groupInfo:state => state.userManagement.groupArr
+  computed: mapState({
+    projectBasicInfo: (state) => state.project.projectBasicInfo,
+    studentList: (state) => state.userManagement.studentList,
+    groupInfo: (state) => state.userManagement.groupArr,
+    decoderArr: state => state.decoder.decoderArr,
   }),
   beforeMount() {
     if (this.addTitle == "采集器") {
@@ -176,32 +221,36 @@ export default {
       this.isShowProjectItem = true;
     } else if (this.addTitle == "角色") {
       this.desp = true;
-    }else if(this.addTitle == "控制器"){
+    } else if (this.addTitle == "控制器") {
       this.desp = true;
       this.isShowCaiijiqiItem = true;
-    }else if(this.addTitle == "项目组"){
+    } else if (this.addTitle == "项目组") {
       this.desp = true;
-    }else if(this.addTitle == "学生"){
+    } else if (this.addTitle == "学生") {
       this.desp = true;
-    }else {
+    } else {
       this.desp = false;
     }
-
   },
   mounted() {
-    if(this.addTitle == "项目"){
-      this.projectBasicInfo.forEach(el => {
-        this.projectNameArr.push(el.name)
-        this.projectIdArr.push(el.number)
-      })
+    if (this.addTitle == "项目") {
+      this.projectBasicInfo.forEach((el) => {
+        this.projectNameArr.push(el.name);
+        this.projectIdArr.push(el.number);
+      });
     }
-    if(this.addTitle == "项目组"){
-      this.groupInfo.forEach(el => {
-        this.projectNameArr.push(el.groupName)
-        this.projectIdArr.push(el.groudID)
-      })
+    if (this.addTitle == "项目组") {
+      this.groupInfo.forEach((el) => {
+        this.projectNameArr.push(el.groupName);
+        this.projectIdArr.push(el.groudID);
+      });
     }
-    this.getStudentList()
+    if (this.addTitle == "学生") {
+      this.getStudentList();
+    }
+    if (this.addTitle == "采集器") {
+      this.$store.dispatch('decoder/findDecoder')
+    }
   },
 };
 </script>
@@ -237,12 +286,13 @@ export default {
 
   .selectadmin {
     width: 500px !important;
+
     option:disabled {
       color: rgba(255, 255, 255, 0.69);
     }
   }
 
-  @mixin  commonStyle{
+  @mixin commonStyle {
     background: rgba(0, 0, 0, 0.6);
     color: rgba(255, 255, 255, 1);
     padding-left: 10px;
@@ -251,19 +301,23 @@ export default {
     overflow: hidden;
     margin-left: 20px;
   }
+
   .addcommon {
     width: 500px;
-    @include commonStyle()
+    @include commonStyle();
   }
-  .selectDecoder{
+
+  .selectDecoder {
     width: 240px;
-    @include commonStyle()
+    @include commonStyle();
   }
+
   @mixin commonStyle {
     white-space: nowrap;
     height: 30px;
     line-height: 30px;
   }
+
   .groupName {
     @include commonStyle();
   }

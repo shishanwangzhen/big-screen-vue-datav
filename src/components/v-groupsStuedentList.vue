@@ -31,31 +31,36 @@
                 <button class="btn_lajitong" @click="delect(curStu.account,curStu.id)">
                     <i class="iconfont icon-lajitong"></i>
                 </button>
-                <button class="btn_tianxie">
-                    <i class="iconfont icon-tianxie" @click="edit('学生')"></i>
+                <button class="btn_tianxie" @click="edit(curStu.id,curStu.account)">
+                    <i class="iconfont icon-tianxie" ></i>
                 </button>
             </td>
         </tr>
         </tbody>
     </table>
         <v-deleteStudent :studentName="studentName" :studentId="studentId" ></v-deleteStudent>
+        <v-editStudent :editList="editList" :curStudentName="curStudentName" :studentId="studentId"></v-editStudent>
     </div>
 </template>
 
 <script>
     import {mapState} from 'vuex'
     import deleteStudent from '_c/v-deleteStudent'
+    import editStudent from '_c/v-editStudent'
     export default {
         name: "v-groupsStuedentList",
         components:{
-            'v-deleteStudent':deleteStudent
+            'v-deleteStudent':deleteStudent,
+            'v-editStudent':editStudent
         },
         data(){
             return{
                 curIndex:0,
                 groubId:'',
                 studentName:'',
-                studentId:''
+                studentId:'',
+                editList:['账号','姓名','手机号','密码','邮箱','专业'],
+                curStudentName:''
             }
         },
         methods:{
@@ -68,7 +73,11 @@
                 this.studentName = name
                 this.studentId = id
             },
-            edit(){},
+            edit(curStudentId,account){
+                this.studentId = curStudentId
+                this.curStudentName = account
+                this.$store.commit('editStudent')
+            },
             async getStudentMsgList(){
                 await this.$store.dispatch('userManagement/studentList',[
                     {type:'addList'},

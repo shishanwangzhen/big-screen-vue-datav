@@ -42,33 +42,35 @@
           <ul>
             <li>
               <span>名称：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>ID：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>型号：</span>
-              <div class="ipu" contenteditable="true"></div>
+              <input class="ipu" />
             </li>
             <li>
               <span>厂商：</span>
               <select name="" id="">
-                <option value="">1</option>
-                <option value="">1</option>
+                <option value="">厂家A</option>
+                <option value="">厂家B</option>
               </select>
             </li>
             <li>
               <span>协议类型：</span>
               <select name="" id="">
-                <option value="">1</option>
-                <option value="">1</option>
+                <option value="">TCP</option>
+                <option value="">MQTT</option>
+                <option>CoAP</option>
+                <option>HTTP</option>
               </select>
             </li>
             <li>
               <span>备注：</span>
-              <div class="remarks" contenteditable="true"></div>
+              <textarea class="remarks" contenteditable="true"></textarea>
             </li>
           </ul>
           <div class="selctType">
@@ -129,8 +131,6 @@ export default {
     }
   },
   beforeMount() {
-    this.$store.dispatch("roleTableList");
-    console.log(this.arrroleTableList);
   },
   computed: {
     ...mapState(["arrroleTableList"]),
@@ -380,42 +380,15 @@ tr td:first-child {
           border: none;
         }
         .remarks {
+          color: #fff;
           padding: 5px;
           font-size: 15px;
-          overflow-y: scroll;
           margin-top: 5px;
           width: 225px;
           height: 125px;
           opacity: 1;
           border-radius: 6px;
           background: rgba(119, 165, 255, 0.33);
-        }
-        /* 自定义滚动条样式开始 */
-        ::-webkit-scrollbar {
-          width: 5px;
-          /*滚动条宽度*/
-          height: 18px;
-          /*滚动条高度*/
-        }
-
-        /*定义滚动条轨道 内阴影+圆角*/
-        ::-webkit-scrollbar-track {
-          box-shadow: 0px 1px 3px #071e4a inset;
-          /*滚动条的背景区域的内阴影*/
-          border-radius: 10px;
-          /*滚动条的背景区域的圆角*/
-          background-color: #071e4a;
-          /*滚动条的背景颜色*/
-        }
-
-        /*定义滑块 内阴影+圆角*/
-        ::-webkit-scrollbar-thumb {
-          box-shadow: 0px 1px 3px rgb(7, 68, 160) inset;
-          /*滚动条的内阴影*/
-          border-radius: 10px;
-          /*滚动条的圆角*/
-          background-color: rgb(7, 68, 160);
-          /*滚动条的背景颜色*/
         }
       }
     }

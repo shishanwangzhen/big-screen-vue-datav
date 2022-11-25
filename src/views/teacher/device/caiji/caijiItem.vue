@@ -15,7 +15,7 @@
               <th>备注</th>
               <th>
                 操作
-                <v-addDevices :addTitle="addTitle" :addList="addList"></v-addDevices>
+                <v-addDevices :addTitle="addTitle" ></v-addDevices>
               </th>
             </tr>
           </thead>
@@ -123,7 +123,7 @@
 </template>
     
 <script>
-import realTime from "../../../../components/realTime.vue";
+import realTime from "_c/realTime.vue";
 export default {
   name: "app",
   components: {
@@ -468,7 +468,6 @@ export default {
       isCheckItem: false,
       hasNoSel: false,
       showDeleComfirm: false,
-      addList:["设备名称","设备ID","设备型号"]
     };
   },
   methods: {
@@ -509,6 +508,9 @@ export default {
     add() {
       this.showAddBox = true;
     },
+  },
+  beforeMount(){
+    this.$store.dispatch('caijiqi/findCollector')
   },
   mounted() {
     var myChart = this.$echarts.init(document.getElementById("echart"));
@@ -664,7 +666,7 @@ thead tr {
 }
 
 .echart_box {
-  position: fixed;
+  position: absolute;
   padding-top: 20px;
   padding-left: 5px;
   margin-top: 10px;

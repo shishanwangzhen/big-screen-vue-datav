@@ -91,11 +91,6 @@ export default {
     async enter(id) {
       //存储项目id
       sessionStorage.setItem('projectId',id)
-      // console.log('sessionStorage.getItem', sessionStorage.getItem('projectId'))
-      // await this.$store.dispatch('userManagement/findGroup',{
-      //   creatorId:sessionStorage.getItem('teacherId'),
-      //   projectId:sessionStorage.getItem('projectId')
-      // })
       this.$router.push({
         path: '/teacherPage/projectDetails'
       })
