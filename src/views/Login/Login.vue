@@ -192,7 +192,7 @@ export default {
               password: psd,
             });
             this.$router.push({
-              path: "/student",
+              path: "/studentPage",
             });
           }
         } catch (err) {

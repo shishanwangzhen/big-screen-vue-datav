@@ -2,13 +2,13 @@
     <div>
       <button class="btn_xiangqing" @click="isActive = !isActive">详情</button>
       <div v-show="isActive">
-      <dv-border-box-12 class="dv12">
+      <dv-border-box-10 class="dv10">
         <div class="detailContainbox">
-          <div class="detailTitle">{{ curDeviceName }}-设备详情</div>
+          <div class="detailTitle">{{ detailTitle }}-设备详情</div>
           <ul class="msg">
-            <li>设备名称：台创园采集器</li>
-            <li>设备ID：10062B28</li>
-            <li>设备型号：科瑞威-L014</li>
+            <li>设备名称：{{ detailTitle }}</li>
+            <li>设备ID：{{deviceId}}</li>
+            <li>设备型号：{{model}}</li>
             <li>
               设备解码器：
                   <ul class="decoderMsg">
@@ -19,14 +19,14 @@
                       <li>协议类型：</li>
                   </ul>
             </li>
-            <li>备注：1111111111111111111111111111111111111111111111111111111111111111111111111111</li>
+            <li>备注：{{remarks}}</li>
           </ul>
         </div>
         <div class="selctType">
           <button @click="isActive = !isActive">取消</button>
           <button>确定</button>
         </div>
-      </dv-border-box-12>
+      </dv-border-box-10>
       <v-mask :isActive="isActive"></v-mask>
     </div>
     </div>
@@ -36,7 +36,7 @@
   <script>
   export default {
     inject: ["reload"],
-    props: ["showDetaileBox", "detailTitl"],
+    props: ["showDetaileBox", "detailTitle","model","deviceId","remarks"],
     data() {
       return {
         curDeviceName: "台创园采集器",
@@ -75,7 +75,7 @@
       cursor: pointer;
     }
   }
-  .dv12 {
+  .dv10 {
     z-index: 9001;
     position: absolute;
     top: 50%;

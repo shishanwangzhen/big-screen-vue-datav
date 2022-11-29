@@ -16,10 +16,7 @@
             <span >解码器</span>
             <select class="itemNo editcommon " v-model="decoderId">
                 <option value="" disabled selected>选择解码器</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
+                <option v-for="item in decoderArr"  :key="item.id" :value="item.id">{{decoderArr.name}}</option>
             </select>
         </div>
         <div class="containBox" v-show="despBox">
@@ -34,6 +31,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 
     export default {
         name: "v-editList",
@@ -130,6 +128,9 @@
                 }
             },
         },
+        computed:mapState({
+            decoderArr:state => state.decoderArr
+        }),
         mounted() {
             if(this.editType == '项目'){
                 this.isShowProjectItem = true

@@ -33,12 +33,6 @@ const routes = [{
   }
 },
 {
-  path: '/admin/:admin',
-  name: 'admin',
-  component: () => import("../views/mem_administration/index.vue"),
-  meta: { title: '教师成员管理' }
-},
-{
   path: '/teacherPage',
   name: 'teacher',
   component: () => import("../views/teacher/project.vue"),
@@ -160,21 +154,38 @@ const routes = [{
     },
   ]
 },
-
 {
-  path: '/device',
-  name: "device",
-  component: () => import("../views/device/index.vue")
-},
-{
-  path: '/index',
-  name: "data",
-  component: () => import("../views/index.vue")
-},
-{
-  path: '/student',
-  name: "student",
-  component: () => import("../views/student/index.vue")
+  path:'/studentPage',
+  name:'studentPage',
+  component: () => import("../views/student/projectTop.vue"),
+  redirect:'/studentPage/collector',
+  children:[
+    {
+      path:'collector',
+      name:'collector',
+      component:()=> import("../views/student/ordinaryStudent/caijiqi/caijiqi.vue")
+    },
+    {
+      path:'controll',
+      name:'controll',
+      component:()=> import("../views/student/ordinaryStudent/controll/controll.vue")
+    },
+    {
+      path:'beControll',
+      name:'beControll',
+      component:()=> import("../views/student/ordinaryStudent/beControlled/beControlled.vue")
+    },
+    {
+      path:'camera',
+      name:'camera',
+      component:()=> import("../views/student/ordinaryStudent/camera/camera.vue")
+    },
+    {
+      path:'fictitious',
+      name:'fictitious',
+      component:()=> import("../views/student/ordinaryStudent/fictitious/fictitious.vue")
+    }
+  ]
 }
 ]
 const router = new Router({

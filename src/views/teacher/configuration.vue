@@ -1,7 +1,7 @@
 <template>
     <div class="import-container">
         <fieldset>
-            <legend class="title">剩余未配置设备</legend>
+            <legend class="title">可配置设备</legend>
             <div class="importMsg">
                 <div>
                     <ul class="checkboxContainer">

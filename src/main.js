@@ -5,7 +5,7 @@ import store from './store';
 import dataV from '@jiaminghi/data-view';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-require('./mock/mockServer')
+
 // 引入全局css
 import './assets/scss/style.scss';
 import "./assets/iconfont/iconfont.css"
@@ -23,6 +23,9 @@ Vue.prototype.$axios = axios
 // 引入Bus
 import Bus from './bus'
 Vue.prototype.$bus = Bus
+
+// 屏幕自适应
+import './rem' 
 
 //引入echart
 //4.x 引用方式
@@ -48,6 +51,7 @@ import day from "./components/v-day.vue"
 import addInputList from './components/v-addInputList.vue'
 import instructions from './components/v-editInstructions'
 import unbinding from './components/v-unbinding'
+import latestNews from './components/v-latestNews'
 Vue.component('v-projectName',projectName)
 Vue.component('v-topRight',topRight)
 Vue.component('Table',table)
@@ -62,6 +66,7 @@ Vue.component('v-day',day)
 Vue.component('v-addInputList',addInputList)
 Vue.component('v-editInstructions',instructions)
 Vue.component("v-unbinding",unbinding)
+Vue.component('v-latestNews',latestNews)
 
 
 

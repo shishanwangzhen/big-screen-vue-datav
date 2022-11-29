@@ -8,8 +8,8 @@
 
     <div class="stick"></div>
     <div class="left">
-      <div class="member" @click="Switch" data-Switch="成员管理" ref="mem">成员管理</div>
-      <div class="device" @click="Switch" data-Switch="设备管理" ref="device">设备管理</div>
+      <div class="member"></div>
+      <div class="device"></div>
     </div>
     <div class="right">
       <div class="userName">
@@ -22,16 +22,9 @@
       </div>
     </div>
     <div class="projectSelection">
-      <select name="" class="select_group">
-            <option value="">花里胡哨</option>
-            <option value="">嘎嘎嘎嘎嘎</option>
-            <option value="">红红火火恍恍惚惚</option>
-            <option value="">青青菜园</option>
-            <option value="">giao爷</option>
-      </select>
+      <span>花里胡哨</span>
     </div>
     <span class="tainqi">
-      <!-- {{tainqi}} <span>{{ dataType }}</span>  -->
       {{ nowYear }}{{ nowDate }}
       {{ nowWeek }} <span>{{ datetime }}</span>
     </span>
@@ -52,25 +45,6 @@ export default {
     };
   },
   methods: {
-    Switch(event) {
-      if (event.target.dataset.switch == "成员管理") {
-        sessionStorage.setItem("key", "成员管理");
-         // 判断是否跳转到设备管理
-         this.toDevicePage = false;
-        this.$bus.$emit("deviceAdministration", this.toDevicePage);
-        this.$refs.mem.setAttribute('id','text')
-        this.$refs.device.setAttribute('id','text2')
-        // this.reload();
-      } else {
-        // 判断是否跳转到设备管理
-        this.toDevicePage = true;
-        this.$bus.$emit("deviceAdministration", this.toDevicePage);
-        sessionStorage.setItem("key", "设备管理");
-        this.$refs.mem.setAttribute('id','text2')
-        this.$refs.device.setAttribute('id','text')
-        // this.reload();
-      }
-    },
     logOut() {
       this.$router.push("/cover");
     },

@@ -19,7 +19,7 @@
         </el-select>
       </div>
       <div class="curOption">
-        <div class="member" @click="Switch" data-Switch="成员管理">成员管理</div>
+        <div class="member" @click="Switch" data-Switch="成员管理">成员管理2</div>
         <p class="dotted_line"></p>
         <div class="device" @click="Switch" data-Switch="设备管理">设备管理</div>
       </div>

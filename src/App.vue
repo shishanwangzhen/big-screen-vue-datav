@@ -36,5 +36,6 @@
   height: 937px;
   overflow: hidden;
   position: relative;
+  background: rgb(4,7,47);
 }
 </style>

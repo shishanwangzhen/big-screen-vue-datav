@@ -41,18 +41,7 @@
         </table>
       </div>
       <div class="decoderRight">
-        <div class="tips">
-          <div class="tipsTop">
-            <i class="iconfont icon-horn"></i>
-            <span style="padding-left: 10px">最新消息</span>
-          </div>
-          <div id="wrap">
-            <div id="inner">
-              <div id="first">本店主营拉面,刀削面,烩面,盖浇饭</div>
-              <div id="second">本店主营拉面,刀削面,烩面,盖浇饭</div>
-            </div>
-          </div>
-        </div>
+        <v-latestNews></v-latestNews>
         <div class="editDocoder">
           <div class="icons"></div>
           <div class="editTitle">{{title}}</div>

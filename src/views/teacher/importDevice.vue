@@ -51,7 +51,7 @@
                         <div class="th">
                             <div>已导入设备名称</div>
                             <div>设备id</div>
-                            <div>导入人</div>
+                            <div>操作人</div>
                             <div>导入日期</div>
                         </div>
                         <div class="td">
@@ -70,7 +70,7 @@
                         <div class="th">
                             <div>已导入设备名称</div>
                             <div>设备id</div>
-                            <div>导入人</div>
+                            <div>操作人</div>
                             <div>导入日期</div>
                         </div>
                         <div class="td">
@@ -89,7 +89,7 @@
                         <div class="th">
                             <div>已导入设备名称</div>
                             <div>设备id</div>
-                            <div>导入人</div>
+                            <div>操作人</div>
                             <div>导入日期</div>
                         </div>
                         <div class="td">
@@ -108,7 +108,7 @@
                         <div class="th">
                             <div>已导入设备名称</div>
                             <div>设备id</div>
-                            <div>导入人</div>
+                            <div>操作人</div>
                             <div>导入日期</div>
                         </div>
                         <div class="td">

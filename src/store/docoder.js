@@ -19,7 +19,6 @@ const mutations = {
                     remarks:item.remarks
                 })
             })
-            console.log('state.decoderArr',data)
         }
     }
 }

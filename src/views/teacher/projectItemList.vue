@@ -28,7 +28,6 @@ export default {
             this.projectId = sessionStorage.getItem('projectId')
             sessionStorage.setItem('projectId',id)
             this.reload()
-            
         }
     },
     computed:mapState({

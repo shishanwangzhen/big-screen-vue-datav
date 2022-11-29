@@ -49,7 +49,7 @@
               <td class="record">
                 <v-edit :editTitle="device.name " editType="采集器" :editList="editList" :Id="device.id"></v-edit>
                 <v-delect :delectTitle="device.name " delectType="采集器" :delectId="device.id"></v-delect>
-                <v-details></v-details>
+                <v-details :detailTitle="device.name" :model="device.model" :deviceId="device.ID" :remarks="device.remarks"></v-details>
               </td>
             </tr>
           </tbody>
@@ -59,18 +59,7 @@
         </div>
       </div>
       <div class="right">
-        <div class="tips">
-          <div class="tipsTop">
-            <i class="iconfont icon-horn"></i>
-            <span>最新消息</span>
-          </div>
-          <div id="wrap">
-            <div id="inner">
-              <div id="first">本店主营拉面,刀削面,烩面,盖浇饭</div>
-              <div id="second">本店主营拉面,刀削面,烩面,盖浇饭</div>
-            </div>
-          </div>
-        </div>
+        <v-latestNews></v-latestNews>
         <realTime></realTime>
         <dv-border-box-12
           style="height: 300px; width: 320px; margin-top: 10px;margin-right: 60px; "
@@ -419,12 +408,12 @@ export default {
     collectorList:state => state.caijiqi.collectorList
   }),
   beforeMount(){
-    // this.getWeather()
     this.$store.dispatch('caijiqi/findCollector')
   },
   mounted() {
     var myChart = this.$echarts.init(document.getElementById("echart"));
     myChart.setOption(this.option);
+    this.$store.dispatch('caijiqi/findCollector')
   },
 };
 </script>
