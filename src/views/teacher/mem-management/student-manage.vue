@@ -6,19 +6,18 @@
     </div>
     <dv-border-box-10 class="dv10">
       <div class="stuMsg">
-        <ul v-for="(item, index) in stuMsg" :key="index" class="msg">
+        <ul class="msg">
           <li>
             <div class="jpgImg">
               <i class="iconfont icon-gantanhao-xianxingyuankuang"></i>
             </div>
-            {{ item.stuName }}-详情
+            {{ groupArr.length > 0  ? groupArr[0].name  :'暂无项目组'}}-详情
           </li>
-          <li>{{ item.identity }}</li>
-          <li>{{ item.platform }}</li>
-          <li>电话：+{{ item.phone }}</li>
+          <li>组编号：{{ groupArr.length > 0  ? groupArr[0].number : ''}}</li>
+          <li>组描述：{{ groupArr.length > 0 ? groupArr[0].info :''}}</li>
         </ul>
-        <ul v-for="(element, index) in deviceArr" :key="`element${index}`">
-          {{element}}
+        <ul>
+          <li></li>
         </ul>
       </div>
       <div class="hasDevice"></div>
@@ -27,44 +26,23 @@
 </template>
 
 <script>
-  import groups from '_c/v-groupsTable'
-  import groupsStuedentList from '_c/v-groupsStuedentList'
+import groups from '_c/v-groupsTable'
+import groupsStuedentList from '_c/v-groupsStuedentList'
+import { mapState } from 'vuex';
 export default {
-    components:{
-      'v-groups':groups,
-      'v-groupsStuedentList':groupsStuedentList
-    },
+  components: {
+    'v-groups': groups,
+    'v-groupsStuedentList': groupsStuedentList
+  },
   data() {
     return {
-      stuMsg: [
-        {
-          stuName: "张晓华",
-          identity: "江苏农林1号实训台普通用户",
-          platform: "江苏农林1号实训台",
-          phone: "18269040432",
-          device: [
-            "采集器1",
-            "采集器2",
-            "采集器3",
-            "采集器1",
-            "采集器2",
-            "采集器3",
-            "采集器1",
-            "采集器2",
-            "采集器3",
-            "采集器1",
-            "采集器2",
-            "采集器3",
-          ],
-        },
-      ],
       deviceArr: [],
       showDeleComfirm: false,
       delectTitle: "",
       showEditItem: false,
       editTitle: "",
-      editList:["组别","组编号"],
-      addList:["组描述","组名称","组编号"],
+      editList: ["组别", "组编号"],
+      addList: ["组描述", "组名称", "组编号"],
       fnFenGe: (arr, N) => {
         let newArr = [];
         for (let i = 0; i < arr.length; i += N) {
@@ -76,11 +54,11 @@ export default {
     };
   },
   beforeMount() {
-    let getArr = this.stuMsg.map((el) => el.device);
-    getArr.forEach((el) => {
-      let result = this.fnFenGe(el, 4);
-      this.deviceArr = result;
-    });
+    this.$store.dispatch("device/findDevice", {
+      binding: "1",
+      bindingId: sessionStorage.getItem("teacherId"),
+      projectId: sessionStorage.getItem("projectId")
+    })
   },
   methods: {
     delect(type) {
@@ -91,12 +69,16 @@ export default {
       this.showEditItem = true;
       this.editTitle = data;
     },
-    editGroup(){
-      this.editList = ["组别","组编号"]
+    editGroup() {
+      this.editList = ["组别", "组编号"]
     },
-    changeAddList(){
+    changeAddList() {
     }
   },
+  computed: mapState({
+    groupArr: state => state.userManagement.groupArr,
+    deviceList: state => state.device.deviceList
+  })
 };
 </script>
 
@@ -104,6 +86,7 @@ export default {
 .top {
   display: flex;
 }
+
 @mixin table {
   /* border-radius: 20px !important; */
   /* border-radius: 20px ; */
@@ -114,12 +97,15 @@ export default {
   table-layout: fixed;
   margin: 20px 10px 20px 20px;
 }
+
 .tableLeft {
   @include table();
 }
+
 .tableRight {
   @include table();
 }
+
 thead {
   text-align: left;
   background: rgba(12, 54, 122) !important;
@@ -129,6 +115,7 @@ thead {
 thead tr th {
   padding-left: 10px;
   line-height: 55px;
+
   &:last-child {
     display: flex;
   }
@@ -136,6 +123,7 @@ thead tr th {
 
 .record {
   display: flex;
+
   button {
     color: white;
     border-radius: 5px;
@@ -143,6 +131,7 @@ thead tr th {
     height: 21.3px;
     border: none;
     margin-right: 10px;
+
     &:first-child {
       background: rgba(0, 186, 173, 1);
     }
@@ -183,6 +172,7 @@ tbody {
   background: rgba(5, 13, 75) !important;
   box-shadow: inset 0px 1px 20px 0px rgba(18, 142, 232, 0.34) !important;
 }
+
 // 1、-webkit-line-clamp:2; (用来限制在一个块元素显示的文本的行数,2表示最多显示2行。 为了实现该效果，它需要组合其他的WebKit属性)
 
 // 2、display: -webkit-box; (和1结合使用，将对象作为弹性伸缩盒子模型显示 )
@@ -195,9 +185,11 @@ tbody {
 tbody tr td {
   margin: 15px;
 }
+
 tbody tr td:first-child {
   padding-left: 15px;
 }
+
 // tbody tr td:nth-child(3) {
 //   // display: -webkit-box;
 //   text-overflow: ellipsis;
@@ -207,18 +199,15 @@ tbody tr td:first-child {
 // }
 .tableLeft tbody tr {
   margin-top: 5px;
-  background: linear-gradient(
-    90deg,
-    rgba(74, 106, 150, 1) 0%,
-    rgba(210, 227, 250, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(74, 106, 150, 1) 0%,
+      rgba(210, 227, 250, 0) 100%);
 }
+
 .tableLeft tbody tr:active {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 201, 188, 1) 0%,
-    rgba(210, 227, 250, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(0, 201, 188, 1) 0%,
+      rgba(210, 227, 250, 0) 100%);
 }
 
 tbody tr,
@@ -229,6 +218,7 @@ thead tr {
   width: 100%;
   table-layout: fixed;
 }
+
 table thead {
   display: table;
   width: 100%;
@@ -297,30 +287,36 @@ table thead {
   line-height: 15px;
   color: rgba(255, 255, 255, 1);
 }
+
 .on-line {
   background: rgba(67, 207, 124, 1);
   @include status();
 }
+
 .off-line {
   @include status();
   background: rgba(212, 48, 48, 1);
 }
+
 .unbound {
   background: rgba(255, 141, 26, 1);
   width: 45px !important;
   @include status();
 }
+
 .dv10 {
   width: 98%;
   height: 270px;
   margin: 10px 20px 20px 20px;
+
   .stuMsg {
     display: flex;
-    color:#fff ;
+    color: #fff;
   }
-  .hasDevice {
-  }
+
+  .hasDevice {}
 }
+
 .operation {
   button {
     color: #fff;
@@ -330,36 +326,46 @@ table thead {
     border-radius: 9px;
     margin: 3px;
     padding: 2px;
+
     &:active {
       box-shadow: inset -3px -4px 10px 0px rgba(255, 255, 255, 0.25);
     }
+
     i {
       font-size: 20px;
     }
   }
+
   .btn_lajitong {
     background: rgba(214, 30, 30, 1);
   }
+
   .btn_tianxie {
     background: rgba(0, 186, 173, 1);
   }
+
   .btn_gantanhao {
     background: rgba(255, 141, 26, 1);
   }
 }
+
 $textColor: white;
+
 .msg {
   margin-left: 20px;
-  & > li {
+
+  &>li {
     padding: 20px;
     color: $textColor;
     font-size: 20px;
     font-weight: 400;
   }
-  & > li:first-child {
+
+  &>li:first-child {
     color: $textColor;
     font-size: 25px;
     font-weight: 500;
+
     .jpgImg {
       display: inline-block;
       text-align: center;
@@ -370,6 +376,7 @@ $textColor: white;
       border-radius: 10px;
       background: rgba(255, 141, 26, 1);
       box-shadow: inset -3px -4px 10px 0px rgba(255, 255, 255, 0.25);
+
       i {
         font-size: 20px;
       }

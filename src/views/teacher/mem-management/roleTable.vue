@@ -186,7 +186,8 @@
     height:500px;
     top: 430px;
     left: 1275px;
-    z-index: 1;
+    // z-index: 1;
+    opacity: 0.5;
     background: url(../../../assets/images/roleTableImg.png )  ;
     background-size: 500px 500px;
   }

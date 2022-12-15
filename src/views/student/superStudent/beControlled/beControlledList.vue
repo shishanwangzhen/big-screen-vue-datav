@@ -3,11 +3,11 @@
     <div class="top">
       <div class="search">
         <select name="" class="configure">
-          <option value="" selected>联通控制器1</option>
-          <option value="">2</option>
-          <option value="">2</option>
-          <option value="">2</option>
-        </select>
+            <option value="" selected>采集设备</option>
+            <option value="">控制设备</option>
+            <option value="">视频设备</option>
+            <option value="">监控设备</option>
+          </select>
       </div>
       <div class="addSensor">所有设备</div>
       <div class="delectWays" @click="addBecontrol">

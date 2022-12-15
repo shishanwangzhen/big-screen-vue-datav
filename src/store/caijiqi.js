@@ -71,7 +71,7 @@ const actions = {
             commit('GETDELETECONTROLLER',result.errcode)
             return 'ok'
         } else {
-        return new Promise(new Error('failed to delete collector item'))
+        return new Promise(new Error('failed to edit collector item'))
         }
     },
 }

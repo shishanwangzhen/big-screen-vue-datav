@@ -52,6 +52,61 @@ export const reqUpdateGroupStatus = (id) =>  requests({method:'POST',url:`/core/
 // 删除项目组中的学生
 export const reqUpdateGroupStudent = (id) =>  requests({method:'POST',url:`/core/group/updateGroupStudent?id=${id}`})
 
+/** 
+ *  @tips 查询设备接口已经更改为/core/Device/findDevice 查询设备的条件可以根据查询设备的类型进行查询
+*/
+// 查询设备 设备类型（1.采集设备，2.控制设备，3.被控设备，4.视频设备，5.虚拟设备）
+export const reqFindDevice = (data) => requests({method:'POST',url:'/core/Device/findDevice',data})
+
+// 添加设备
+export const reqInsertDevice = (data) => requests({method:'POST',url:'/core/Device/insertDevice',data})
+
+// 将设备导入项目组
+export const reqUpdateDeviceBinding = (data) => requests({method:'POST',url:'/core/Device/updateDeviceBinding',data})
+
+// 删除设备
+export const reqDeleteDevice = (id) => requests({method:'POST',url:`/core/Device/deleteDevice?deviceId=${id}`})
+
+// 解绑设备
+export const reqUpdateDeviceBindingById = (id) => requests({method:'POST',url:`/core/Device/updateDeviceBindingById?id=${id}`})
+
+// 修改设备
+export const reqUpdateDevice = (data) => requests({method:'POST',url:'/core/Device/updateDevice',data})
+
+// 查询解码器
+export const reqFindDecoder = (data) => requests({method:'POST',url:'/core/decoder/findDecoder',data})
+
+// 添加解码器
+export const reqInsertDecoder = (data) => requests({method:'POST',url:'/core/decoder/insertDecoder',data})
+
+// 修改解码器
+export const reqUpdateDecoder = (data) => requests({method:'POST',url:'/core/decoder/updateDecoder',data})
+
+// 删除解码器
+export const reqUpdateDecoderStatus = (id) => requests({method:'POST',url:`/core/decoder/updateDecoderStatus?id=${id}`})
+
+// 获取序列号
+export const reqDeviceNumber = () => requests({method:'POST',url:'/core/deviceNumber/findDeviceNumber'})
+
+// 获取设备详情
+export const reqFindDeviceDetails = (id) => requests({method:'POST',url:`/core/Device/findDeviceByDeviceId?deviceId=${id}`})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 添加采集设备
 export const reqInsertCollector = (data) => requests({method:'POST',url:'/core/Collector/insertCollector',data})
 
@@ -64,8 +119,8 @@ export const reqUpdateCollectorr = (data) => requests({method:'POST',url:'/core/
 // 删除采集器
 export const requpdateCollectorStatus = (id) =>  requests({method:'POST',url:`/core/Collector/updateCollectorStatus?id=${id}`})
 
-// 查询解码器
-export const reqFindDecoder = (data) => requests({method:'POST',url:'/core/decoder/findDecoder',data})
+
+
 
 
 

@@ -61,6 +61,8 @@ export default {
   width: 370px;
   height: 760px;
   background-image: url("../../../assets/images/list.png");
+  background-repeat: no-repeat;
+  background-size: 370px 760px;
   border-radius: 9px;
   border: 2px solid rgba(8, 72, 138, 1);
   box-shadow: inset 0px 1px 20px 0px rgba(18, 142, 232, 0.34);

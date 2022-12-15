@@ -5,6 +5,8 @@ import project from "./project"
 import userManagement from './userManagement'
 import caijiqi from './caijiqi'
 import decoder from './docoder'
+import device from './device'
+import notImportedDevice from './notImportedDevice'
 
 Vue.use(Vuex)
 
@@ -16,7 +18,10 @@ export default new Vuex.Store({
     showDeletCamera:false,
     showAplication:false,
     showDeleteStudent:false,
+    showDeleteDevice:false,
     showEdeitStudent:false,
+    showDeviceDetails:false,
+    editBoxIsActive:false,
     curAddTitle:''
   },
   mutations: {
@@ -34,7 +39,12 @@ export default new Vuex.Store({
     },
     deleteStudent(state){
       state.showDeleteStudent = !state.showDeleteStudent
-      console.log('state.showDeleteStudent',state.showDeleteStudent)
+    },
+    deleteDevice(state){
+      state.showDeleteDevice = !state.showDeleteDevice
+    },
+    deviceDetails(state){
+      state.showDeviceDetails = !state.showDeviceDetails
     },
     editStudent(state){
       state.showEdeitStudent = !state.showEdeitStudent
@@ -44,7 +54,10 @@ export default new Vuex.Store({
     },
     application(state){
       state.showAplication = !state.showAplication
-    }
+    },
+    isShoweditBox(state){
+      state.editBoxIsActive = !state.editBoxIsActive
+    },
   },
   actions: {
 
@@ -54,6 +67,8 @@ export default new Vuex.Store({
     project,
     userManagement,
     caijiqi,
-    decoder
+    decoder,
+    device,
+    notImportedDevice
   }
 })

@@ -93,11 +93,12 @@ export default {};
             &::after {
                 content: "";
                 position: absolute;
-                width: 200px;
-                height: 200px;
+                width: 100px;
+                height: 100px;
                 top: 20px;
                 left: 10px;
                 background: url(../../../../assets/images/collectorImg.png);
+                background-size: 100px 100px;
                 background-repeat: no-repeat;
             }
         }

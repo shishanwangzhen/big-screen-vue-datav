@@ -71,15 +71,17 @@ export default {
   border: 2.92px solid rgba(8, 72, 138, 1);
   box-shadow: inset 0px 1.46px 29.24px 0px rgba(18, 142, 232, 0.34);
   margin-left: 30px;
-  &::after {
+  &::before {
       content: "";
       width: 500px;
       height: 500px;
       position: absolute;
       top: 400px;
-      right: 300px;
+      right: 100px;
+      opacity: 0.5;
       background: url(../../../../assets/images/roleTableImg.png );
       background-size: 500px 500px;
+      opacity: 0.5;
     }
   .tb {
     // position: relative;

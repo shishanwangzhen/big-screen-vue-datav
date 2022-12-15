@@ -2,11 +2,8 @@
   <div class="sensorContain">
     <div class="top">
       <div class="search">
-        <select name="" class="configure">
-          <option value="" selected>联通控制器1</option>
-          <option value="">2</option>
-          <option value="">2</option>
-          <option value="">2</option>
+        <select name="" class="configure" v-model="curDeviceId">
+          <option v-for="item in deviceList" :key="item.id" :value="item.deviceId">{{ item.deviceName }}</option>
         </select>
       </div>
       <div class="addSensor">所有设备</div>
@@ -16,16 +13,17 @@
     </div>
     <div class="becontrolListContainer">
       <div class="becontrolListItemContainer">
-        <div class="becontrolListItem" v-for="num in length" :key="num">
+        <div class="becontrolListItem" v-for="(sensorItem, sensorIndex) in deviceDetailsList.sensorsList"
+          :key="sensorItem.id">
           <ul class="itemTop">
             <li :class="
               type == '在线' ? 'on-line' : type == '离线' ? 'off-line' : ''
             "></li>
-            <li>种植槽升降架1号</li>
+            <li>{{ sensorItem.sensorName }}</li>
             <li><i class="iconfont icon-close"></i></li>
           </ul>
           <!-- 控制 -->
-          <div v-show="curIndexArr.includes(`${num}-0`)?true:false" class="common">
+          <div v-show="curIndexArr.includes(`${sensorIndex + 1}-0`) ? true : false" class="common">
             <ul class="instructions">
               <li v-for="(item, index) in instructions" :key="index">
                 {{ item }}
@@ -36,7 +34,7 @@
             </div>
           </div>
           <!-- 指令 -->
-          <div v-show="curIndexArr.includes(`${num}-1`)?true:false" class="common">
+          <div v-show="curIndexArr.includes(`${sensorIndex + 1}-1`) ? true : false" class="common">
             <ul class="instructionsContent">
               <li>开启指令：2-关闭 1-开启</li>
               <li>关闭指令：1-关闭 2-开启</li>
@@ -56,16 +54,17 @@
             </ul>
           </div>
           <!-- 详情 -->
-            <ul v-show="curIndexArr.includes(`${num}-2`)?true:false" class="common details">
-              <li>设备DI：</li>
-              <li>设备型号：</li>
-              <li>所属控制器：</li>
-              <li>通道号：</li>
-              <li>备注：</li>
-            </ul>
+          <ul v-show="curIndexArr.includes(`${sensorIndex + 1}-2`) ? true : false" class="common details">
+            <li>设备DI：{{ sensorItem.id }}</li>
+            <li>设备类型：{{sensorItem.sensorTypeId == 1 ? '数值型' : sensorItem.sensorTypeId == 2 ? '开关型（可操作）': sensorItem.sensorTypeId == 3 ? '定位型' : sensorItem.sensorTypeId == 4 ? '图片型' :sensorItem.sensorTypeId == 5 ? '开关型（不可操作）' : sensorItem.sensorTypeId == 6 ? '档位型' : sensorItem.sensorTypeId == 7 ? '视频' : sensorItem.sensorTypeId == 8 ? '字符串' : ''}}</li>
+            <li>所属设备：{{ sensorItem.deviceName }}</li>
+            <li>通道号：</li>
+            <li>备注：</li>
+          </ul>
           <div class="basicContent">
             <span v-for="(item, index) in spanContent" :key="index"
-              :class="curIndexArr.includes(`${num}-${index}`) ? 'item' : ''" @click="getIndex(index, num)">
+              :class="curIndexArr.includes(`${sensorIndex + 1}-${index}`) ? 'item' : ''"
+              @click="getIndex(index, sensorIndex + 1)">
               {{ item }}
             </span>
           </div>
@@ -79,26 +78,28 @@
 </template>
       
 <script>
-  import addBecontrol from '_c/v-addBecontrol'
-  export default {
+import { mapState } from 'vuex';
+import addBecontrol from '_c/v-addBecontrol'
+export default {
   name: "app",
   components: {
-    'v-addBecontrol':addBecontrol
+    'v-addBecontrol': addBecontrol
   },
-  inject:['reload'],
+  inject: ['reload'],
   data() {
     return {
       type: "在线",
       length: 15,
       spanContent: ["控制", "指令", "详情"],
       instructions: ["开启", "关闭", "暂停"],
-      addList:['设备名称','设备ID','设备型号'],
-      addTitle:'被控设备',
+      addList: ['设备名称', '设备ID', '设备型号'],
+      addTitle: '被控设备',
       curIndexArr: [],
-      showCtronll:true,
-      showInstructions:false,
-      showDetails:false,
-      curNum:'2'
+      showCtronll: true,
+      showInstructions: false,
+      showDetails: false,
+      curNum: '2',
+      curDeviceId: ''
     };
   },
   methods: {
@@ -110,15 +111,15 @@
       // 改变数组的长度用数组的splice方法使数组变化变成可监听的。
       // 如果操作对象是对象。如果操作的属性是对象内已经有的值，使用$watch,加上关键字deep深度监听对象，
       // 如果操作的属性是对象内没有的新属性。使用$set使对象变成可监听的！
-      this.$set(this.curIndexArr,num - 1,`${num}-${index}`)
+      this.$set(this.curIndexArr, num - 1, `${num}-${index}`)
     },
-    isshowInstructions(){
+    isshowInstructions() {
       this.$store.commit('editInstructions')
     },
-    unbinding(){
+    unbinding() {
       this.$store.commit('unbinding')
     },
-    addBecontrol(){
+    addBecontrol() {
       this.$store.commit("isShowAddBox");
     }
   },
@@ -126,15 +127,30 @@
     for (let i = 1; i <= this.length; i++) {
       this.curIndexArr.push(`${i}-0`);
     }
+    this.curDeviceId = this.deviceList[0].deviceId
   },
+  computed: mapState({
+    deviceList: state => state.device.deviceList,
+    deviceDetailsList: state => state.device.deviceDetailsList
+  }),
   watch: {
     curIndexArr(newArr, oldArr) {
-        console.log("监控curIndexArr");
-        console.log("oldArr", oldArr, "newArr", newArr);
-      },
-    deep: true, // 是否开启深度监听
-    immediate: true, // 是否初始化时就执行一次
+      console.log("监控curIndexArr");
+      console.log("oldArr", oldArr, "newArr", newArr);
     },
+    curDeviceId(newId) {
+      console.log('newId', newId)
+      this.$store.dispatch('device/findDeviceDetails', newId)
+    },
+    immediate: true, // 无论是否发生改变都执行一次
+  },
+  beforeMount() {
+    this.$store.dispatch('device/findDevice', {
+      binding: "1",
+      bindingId: sessionStorage.getItem("teacherId"),
+      projectId: this.$route.query.projectId
+    })
+  }
 };
 </script>
       
@@ -379,30 +395,41 @@
 .common {
   height: 195px;
 }
-@mixin commonStyle{
+
+@mixin commonStyle {
   margin-left: 20px;
   font-size: 16px;
   font-weight: 400;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 1);
 }
+
 .instructionsContent {
   @include commonStyle();
+
   li {
     line-height: 30px;
 
     &:last-child {
       cursor: default;
       text-align: right;
+
       span {
         padding-right: 10px;
       }
     }
   }
 }
-.details{
+
+.details {
   line-height: 30px;
-  @include commonStyle()
+  @include commonStyle();
+
+  li {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 </style>
       

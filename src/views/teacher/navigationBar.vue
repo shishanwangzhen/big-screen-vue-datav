@@ -5,10 +5,6 @@
         <div class="list_icon"></div>
         用户管理
       </div>
-<!--      <div class="navBox" @click="toRole">-->
-<!--        <i class="iconfont icon-zerenren" style="float: left; color: white"></i>-->
-<!--        角色 <i class="iconfont icon-shuangyoujiantou-"></i>-->
-<!--      </div>-->
       <div class="navBox" @click="toManege">
         <i
           class="iconfont icon-yonghuzhuce"
@@ -57,32 +53,58 @@ export default {
     },
     toManege(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/manage'
+        path:'/teacherPage/projectDetails/curProject/manage',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId
+        }
       });
     },
     caijiqi(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/caijiqi'
+        path:'/teacherPage/projectDetails/curProject/caijiqi',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId,
+          deviceType:1
+        }
       });
     },
     control(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/control'
+        path:'/teacherPage/projectDetails/curProject/control',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId,
+          deviceType:2
+        }
       })
     },
     toBecontrol(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/becontroled'
+        path:'/teacherPage/projectDetails/curProject/becontroled',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId
+        }
       })
     },
     toCamera(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/camera'
+        path:'/teacherPage/projectDetails/curProject/camera',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId
+        }
       })
     },
     toFictitious(){
       this.$router.push({
-        path:'/teacherPage/projectDetails/curProject/fictitious'
+        path:'/teacherPage/projectDetails/curProject/fictitious',
+        query:{
+          projectName:this.$route.query.projectName,
+          projectId:this.$route.query.projectId
+        }
       })
     },
     toregisterPhone() {},
@@ -102,6 +124,8 @@ export default {
   width: 370px;
   height: 760px;
   background-image: url("../../assets/images/list.png");
+  background-repeat: no-repeat;
+  background-size: 370px 760px;
   border-radius: 9px;
   border: 2px solid rgba(8, 72, 138, 1);
   box-shadow: inset 0px 1px 20px 0px rgba(18, 142, 232, 0.34);

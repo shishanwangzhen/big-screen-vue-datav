@@ -1,6 +1,8 @@
 <template>
     <div>
-        <button class="btn_delete" @click="isActive = !isActive">删除</button>
+        <button class="btn_delete" @click="isActive = !isActive" v-if="(delectType == '采集器' || delectType == '控制器')">解绑</button>
+        <button class="btn_delete" @click="isActive = !isActive" v-else>删除</button>
+        
         <div class="delect_contain_" v-show="isActive">
         <div class="delect">
             <ul style="position: relative">
@@ -8,7 +10,7 @@
                 <li class="content"><i class="iconfont icon-gantanhao" style="color:rgba(255, 195, 0, 1)"></i> 是否永久删除{{ delectTitle }}</li>
                 <li class="selctType">
                     <button @click="isActive = !isActive">取消</button>
-                    <button @click="deleteItem(delectId)">删除</button>
+                    <button @click="deleteItem(deleteId)">删除</button>
                 </li>
             </ul>
 
@@ -20,28 +22,34 @@
 
 <script>
 export default {
-    props:["delectTitle","delectId","delectType"],
+    props:["delectTitle","deleteId","delectType"],
+    inject:["reload"],
     data(){
         return{
             isActive:false
         }
     },
     methods:{
-        async deleteItem(delectId){
+        async deleteItem(id){
             if(this.delectType == '项目'){
-                await this.$store.dispatch('project/deleteProject',delectId)
+                await this.$store.dispatch('project/deleteProject',id)
                 await this.$store.dispatch('project/projectList')
             }
            if(this.delectType == '项目组'){
-               await this.$store.dispatch('userManagement/updateGroupStatus',delectId)
+               await this.$store.dispatch('userManagement/updateGroupStatus',id)
                await this.$store.dispatch('userManagement/findGroup',{
                    creatorId:sessionStorage.getItem('teacherId'),
-                   projectId:sessionStorage.getItem('projectId')
+                   projectId:this.$route.query.projectId
                })
            }
            if(this.delectType =="采集器"){
-            await this.$store.dispatch('caijiqi/deleteController',delectId)
-            await this.$store.dispatch('caijiqi/findCollector')
+            console.log('delectId',id)
+            await this.$store.dispatch('device/deleteDevice',id)
+            this.reload()
+           }
+           if(this.delectType == "解码器"){
+            await this.$store.dispatch('decoder/deleteDecoder',id)
+            this.reload()
            }
         }
     }

@@ -1,12 +1,13 @@
 <template>
-    <div >
+    <div>
         <div class="topBoxContainer">
-        <div class="projectSelection">
-            <select name="" class="select_group" v-model="curProjectId" @change="getCurData(curProjectId)">
-                <option :value="item.id" v-for="item in projectList" :key="item.id" :selected='item.id == projectId' >{{item.name}}</option>
-            </select>
-        </div>
-        <v-day></v-day>
+            <div class="projectSelection">
+                <select name="" class="select_group" v-model="curProjectId" @change="getCurData(curProjectId)">
+                    <option :value="item.id" v-for="item in projectList" :key="item.id"
+                        :selected='(item.id == curProjectId)'>{{ item.name }}</option>
+                </select>
+            </div>
+            <v-day></v-day>
         </div>
         <router-view></router-view>
     </div>
@@ -16,41 +17,82 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-    inject:['reload'],
-    data(){
+    inject: ['reload'],
+    data() {
         return {
-            projectId:'',
-            curProjectId:'',
+            projectId: '',
+            curProjectId: '',
         }
     },
-    methods:{
-        getCurData(id){
-            this.projectId = sessionStorage.getItem('projectId')
-            sessionStorage.setItem('projectId',id)
-            this.reload()
-        }
+    methods: {
+        async getCurData(id) {
+            await this.$store.dispatch('device/findDevice', {
+                type: this.$route.query.deviceType,
+                binding: "1",
+                bindingId: sessionStorage.getItem("teacherId"),
+                projectId: id
+            })
+            await this.$store.dispatch('userManagement/findGroup', {
+                creatorId: sessionStorage.getItem('teacherId'),
+                projectId: id
+            })
+            if (this.curGroupId == '') {
+                this.$store.commit("userManagement/clearStudentList")
+            } else {
+                await this.$store.dispatch('userManagement/studentList', [
+                    { type: 'addList' },
+                    {
+                        status: 1,
+                        groupId: this.curGroupId,
+                        projectId: this.$route.query.projectId
+                    }
+                ])
+            }
+        },
     },
-    computed:mapState({
-        projectList: state => state.project.projectList
+    computed: mapState({
+        projectList: state => state.project.projectList,
+        curGroupId: state => state.userManagement.curGroupId
     }),
-    watch:{
+    watch: {
+        curProjectId: {
+            handler(newProjectId) {
+                // 使用replace发生警告
+                try {
+                    this.projectList.forEach(item => {
+                        if (item.id == newProjectId) {
+                            this.$router.replace({
+                                query: {
+                                    projectName: item.name,
+                                    projectId: newProjectId,
+                                    deviceType:this.$route.query.deviceType
+                                }
+                            })
+                            throw new Error('OK')
+                        }
+                    })
+
+                } catch (e) { return }
+
+            }
+        }
     },
-    beforeMount(){
-        this.curProjectId = sessionStorage.getItem('projectId')
-        this.projectId = sessionStorage.getItem('projectId')
+    beforeMount() {
+        this.curProjectId = this.$route.query.projectId
     },
-    mounted(){}
-    
+    mounted() { }
+
 
 }
 </script>
 
 <style lang="scss" scoped>
-.topBoxContainer{
+.topBoxContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+
 .projectSelection {
     width: 657px;
     height: 47px;

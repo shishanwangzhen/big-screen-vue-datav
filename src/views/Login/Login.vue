@@ -44,7 +44,7 @@
       <div class="application_box" v-show="application_box">
         <div class="content_left"></div>
         <div class="content_right">
-          <div style="position: absolute; margin-left: 190px">
+          <div class="contentContain">
             <div class="right_title">用户账号申请</div>
             <div class="account inp_box">
               <i class="iconfont icon-renwu-ren"></i>
@@ -191,8 +191,13 @@ export default {
               account: account,
               password: psd,
             });
+            // 普通学生
+            // this.$router.push({
+            //   path: "/studentPage",
+            // });
+            // 学生组长
             this.$router.push({
-              path: "/studentPage",
+              path: "/superStudentPage",
             });
           }
         } catch (err) {
@@ -336,15 +341,18 @@ $content: attr(placeholder);
   width: 720px;
   text-align: center;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   margin: auto;
+  img{
+    height: 560px;
+    width: 720px;
+  }
 }
 
 .title {
-  padding-left: 70px;
+  // padding-left: 70px;
   padding-bottom: 50px;
   text-shadow: 2px 2px 3px rgba(112, 231, 255, 1);
   /** 文本1 */
@@ -404,9 +412,10 @@ $content: attr(placeholder);
 }
 
 .login_box {
-  margin-top: -425px;
-  margin-left: 75px;
   position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%,-50%);
 }
 
 .login_bottom {
@@ -469,6 +478,13 @@ $content: attr(placeholder);
     background: rgba(255, 255, 255, 0.8);
     width: 810px;
     height: 750px;
+    position: relative;
+    .contentContain{
+      position: absolute;
+      top: 50%;
+      left:50%;
+      transform: translate(-50%,-50%);
+    }
 
     .right_title {
       width: 411px;

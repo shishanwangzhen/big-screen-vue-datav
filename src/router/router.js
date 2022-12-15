@@ -7,8 +7,11 @@ Vue.use(Router)
 // 这个是为了避免一个报错
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => console.log("路由跳转错误", err))
+  return originalPush.call(this, location).catch(err => console.log("路由push跳转错误", err))
 }
+Router.prototype.replace = function replace (location) {
+  return originalPush.call(this, location).catch(err => console.log("路由replace跳转错误", err))
+} 
 
 const routes = [{
   path: '/',
@@ -46,12 +49,12 @@ const routes = [{
     },
     {
       path: 'importDevice',
-      name:'importDevice',
+      name: 'importDevice',
       component: () => import("../views/teacher/importDevice")
     },
     {
       path: 'configuration',
-      name:'configuration',
+      name: 'configuration',
       component: () => import("../views/teacher/configuration")
     },
     {
@@ -138,14 +141,14 @@ const routes = [{
             {
               path: 'camera',
               name: 'camera',
-              component:()=>import("../views/teacher/device/camera/navBar"),
-              meta: {title:'摄像头'}
+              component: () => import("../views/teacher/device/camera/navBar"),
+              meta: { title: '摄像头' }
             },
             {
               path: 'fictitious',
               name: 'fictitious',
-              component: ()=>import("../views/teacher/device/fictitious/index"),
-              meta: {title:'虚拟设备'}
+              component: () => import("../views/teacher/device/fictitious/index"),
+              meta: { title: '虚拟设备' }
             }
           ]
         }
@@ -155,35 +158,73 @@ const routes = [{
   ]
 },
 {
-  path:'/studentPage',
-  name:'studentPage',
+  path: '/studentPage',
+  name: 'studentPage',
   component: () => import("../views/student/projectTop.vue"),
-  redirect:'/studentPage/collector',
-  children:[
+  redirect: '/studentPage/collector',
+  children: [
+    {
+      path: 'collector',
+      name: 'collector',
+      component: () => import("../views/student/ordinaryStudent/caijiqi/caijiqi.vue")
+    },
+    {
+      path: 'controll',
+      name: 'controll',
+      component: () => import("../views/student/ordinaryStudent/controll/controll.vue")
+    },
+    {
+      path: 'beControll',
+      name: 'beControll',
+      component: () => import("../views/student/ordinaryStudent/beControlled/beControlled.vue")
+    },
+    {
+      path: 'camera',
+      name: 'camera',
+      component: () => import("../views/student/ordinaryStudent/camera/camera.vue")
+    },
+    {
+      path: 'fictitious',
+      name: 'fictitious',
+      component: () => import("../views/student/ordinaryStudent/fictitious/fictitious.vue")
+    }
+  ]
+},
+{
+  path: '/superStudentPage',
+  name: 'superStudentPage',
+  component: () => import("../views/student/projectTop.vue"),
+  redirect:"/superStudentPage/groupMembers",
+  children: [
+    {
+      path:'groupMembers',
+      name:'groupMembers',
+      component: () => import("../views/student/superStudent/user-management/groupMenber"),
+    },
     {
       path:'collector',
       name:'collector',
-      component:()=> import("../views/student/ordinaryStudent/caijiqi/caijiqi.vue")
+      component: () => import("../views/student/superStudent/caijiqi/caijiqi"),
     },
     {
-      path:'controll',
-      name:'controll',
-      component:()=> import("../views/student/ordinaryStudent/controll/controll.vue")
+      path: 'controll',
+      name: 'controll',
+      component: () => import("../views/student/superStudent/controll/controll.vue")
     },
     {
-      path:'beControll',
-      name:'beControll',
-      component:()=> import("../views/student/ordinaryStudent/beControlled/beControlled.vue")
+      path: 'beControll',
+      name: 'beControll',
+      component: () => import("../views/student/superStudent/beControlled/beControlled.vue")
     },
     {
-      path:'camera',
-      name:'camera',
-      component:()=> import("../views/student/ordinaryStudent/camera/camera.vue")
+      path: 'camera',
+      name: 'camera',
+      component: () => import("../views/student/superStudent/camera/camera.vue")
     },
     {
-      path:'fictitious',
-      name:'fictitious',
-      component:()=> import("../views/student/ordinaryStudent/fictitious/fictitious.vue")
+      path: 'fictitious',
+      name: 'fictitious',
+      component: () => import("../views/student/superStudent/fictitious/fictitious.vue")
     }
   ]
 }

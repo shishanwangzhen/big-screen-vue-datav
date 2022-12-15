@@ -1,11 +1,11 @@
 <template>
   <div>
     <div style="display:flex;align-items: baseline;justify-content: space-between">
-      <div class="topLft">
+      <!-- <div class="topLft">
         <div class="btn" @click="toImport">导入设备</div>
         <img src="../../assets/images/youjiantou.png" alt="">
-      </div>
-      <v-day></v-day>
+      </div> -->
+      <v-day class="dataList"></v-day>
     </div>
 
     <table class="table">
@@ -17,7 +17,7 @@
           <th>项目描述</th>
           <th>
             操作
-            <v-addDevices :addTitle="addTitle" :addList="addList" ></v-addDevices>
+            <v-addDevices :addTitle="addTitle" :addList="addList"></v-addDevices>
             <div>
               <v-clearAll></v-clearAll>
             </div>
@@ -26,9 +26,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(list,index) in projectlist" :key="list.id">
+        <tr v-for="(list, index) in projectlist" :key="list.id">
           <td>
-            <span style="padding-right: 20px">{{ index+1 }}</span>
+            <span style="padding-right: 20px">{{ index + 1 }}</span>
             <span :title="list.name">{{ list.name }}</span>
           </td>
           <td>{{ list.creatorName }}</td>
@@ -37,10 +37,10 @@
           <td class="record">
             <v-edit editType="项目" :editTitle="list.name" :editList="editList" :Id="list.id"></v-edit>
             <v-delect :delectTitle="`${list.name}项目组`" :delectId="list.id" delectType="项目"></v-delect>
-            <button class="configuration" @click="toCongiguration">配置</button>
+            <button class="configuration" @click="toCongiguration(list.id, list.name)">配置</button>
           </td>
           <td>
-            <span class="enter" @click="enter(list.id,list.name)">进入该项目</span>
+            <span class="enter" @click="enter(list.id, list.name)">进入该项目</span>
           </td>
         </tr>
       </tbody>
@@ -54,7 +54,7 @@ import clearAll from '../../components/clearAll.vue'
 import { mapState } from 'vuex';
 export default {
   components: {
-    'v-clearAll':clearAll,
+    'v-clearAll': clearAll,
   },
   inject: ["reload"],
   data() {
@@ -71,7 +71,7 @@ export default {
       addTitle: '项目',
       configurationTitle: '',
       addList: ['项目名称', '项目编号'],
-      editList:['项目名称','项目编号']
+      editList: ['项目名称', '项目编号']
     };
   },
   methods: {
@@ -87,21 +87,32 @@ export default {
     prjecConfigaration() {
       this.isShowConfigaration = true
     },
-    async enter(id) {
+    async enter(id, name) {
       //存储项目id
-      sessionStorage.setItem('projectId',id)
       this.$router.push({
-        path: '/teacherPage/projectDetails'
+        path: '/teacherPage/projectDetails',
+        query: {
+          projectName: name,
+          projectId: id
+        }
       })
+      await this.$store.dispatch("userManagement/findGroup", {
+        creatorId: sessionStorage.getItem("teacherId"),
+        projectId: this.$route.query.projectId,
+      });
     },
-    toImport(){
+    toImport() {
       this.$router.push({
         path: '/teacherPage/importDevice'
       })
     },
-    toCongiguration(){
+    toCongiguration(id, name) {
       this.$router.push({
-        path: '/teacherPage/configuration'
+        path: '/teacherPage/configuration',
+        query: {
+          projectId: id,
+          projectName: name
+        }
       })
     }
   },
@@ -110,18 +121,41 @@ export default {
   }),
   beforeMount() {
     this.$store.dispatch('project/projectList')
+  },
+  mounted() {
+    var host = window.location.host;
+    console.log('host',host)
+    const socket = new WebSocket(`ws://192.168.0.66:8081/socketServer/${sessionStorage.getItem('teacherId')}`)
+    socket.addEventListener('open', function () {
+      console.log('链接成功')
+      // socket.send('客户端连接上服务端的socket')
+    })
+    socket.addEventListener('message', function (event) {
+      console.log('socketEvent', event.data)
+    })
+
+    // 服务断开
+    socket.addEventListener('close', function () {
+      console.log('服务器断开连接')
+    })
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.dataList {
+  position: absolute;
+  right: 40px;
+  top: 120px;
+}
+
 .table {
   width: 1850px;
   color: #fff !important;
   border-collapse: collapse;
   table-layout: fixed;
   margin-left: 40px;
-  margin-top: 25px;
+  margin-top: 80px;
 }
 
 thead {
@@ -141,6 +175,7 @@ thead tr th {
 
 .record {
   display: flex;
+
   .configuration {
     color: white;
     border-radius: 5px;
@@ -148,10 +183,12 @@ thead tr th {
     height: 21.3px;
     border: none;
     background: rgba(42, 130, 228, 1);
-    &:active{
+
+    &:active {
       box-shadow: 1px 1px 1px rgba(42, 130, 228, 1);
     }
   }
+
   .btn_edit {
     &:active {
       box-shadow: 1px 1px 1px rgba(0, 186, 173, 1);
@@ -180,6 +217,7 @@ thead tr th {
   width: 150px;
   height: 23px;
   opacity: 1;
+  font-size: 15px;
   border-radius: 5px;
   color: rgba(255, 255, 255, 1);
   text-shadow: 0 0 5px rgba(255, 141, 26, 1), 0 0 5px rgba(255, 141, 26, 1), 0 0 5px rgba(255, 141, 26, 1), 0 0 15px rgba(255, 141, 26, 1);
@@ -196,8 +234,8 @@ thead tr th {
 tbody {
   overflow-y: scroll;
   display: block;
-  max-height: 680px;
-  min-height: 680px;
+  max-height: 700px;
+  min-height: 700px;
   overflow-x: hidden;
   text-align: left;
   background: rgba(5, 13, 75) !important;
@@ -212,7 +250,8 @@ table::before {
   height: 500px;
   top: 350px;
   left: 500px;
-  z-index: 1;
+  // z-index: 1;
+  opacity: 0.5;
   background: url(../../assets/images/blockImg.png ) no-repeat;
   background-size: 500px 500px;
   transform: rotate(340deg)

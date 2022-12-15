@@ -23,6 +23,9 @@ Vue.prototype.$axios = axios
 // 引入Bus
 import Bus from './bus'
 Vue.prototype.$bus = Bus
+// 引入merge 动态修改路由
+import merge from 'webpack-merge'
+Vue.prototype.merge = merge
 
 // 屏幕自适应
 import './rem' 
@@ -52,6 +55,7 @@ import addInputList from './components/v-addInputList.vue'
 import instructions from './components/v-editInstructions'
 import unbinding from './components/v-unbinding'
 import latestNews from './components/v-latestNews'
+
 Vue.component('v-projectName',projectName)
 Vue.component('v-topRight',topRight)
 Vue.component('Table',table)
@@ -67,6 +71,16 @@ Vue.component('v-addInputList',addInputList)
 Vue.component('v-editInstructions',instructions)
 Vue.component("v-unbinding",unbinding)
 Vue.component('v-latestNews',latestNews)
+// 新的全局组件
+import editDevice from './components/v-editDevice'
+import newDelete from './components/v-newDelete'
+import ellipsis from './components/v-ellipsis'
+import deviceDetails from './components/v-deviceDetails'
+Vue.component('v-editDevice',editDevice)
+Vue.component('v-newDelete',newDelete)
+Vue.component('v-ellipsis',ellipsis)
+Vue.component('v-deviceDetails',deviceDetails)
+
 
 
 

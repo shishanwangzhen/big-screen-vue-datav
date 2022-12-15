@@ -10,61 +10,48 @@
                 采集器名称
               </th>
               <th>状态</th>
-              <th>设备型号</th>
               <th>设备ID</th>
-              <th>备注</th>
+              <th>协议</th>
+              <th>上报周期</th>
               <th>
                 操作
-                <v-addDevices :addTitle="addTitle" ></v-addDevices>
+                <v-addDevices :addTitle="addTitle"></v-addDevices>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="device in collectorList" :key="device.id">
+            <tr v-for=" ( device, index) in deviceList" :key="device.id">
               <td>
-                <el-radio
-                  title="点击选中查看历史曲线和实时数据"
-                  v-model="radio"
-                  :label="device.id"
-                >
-                  <span style="color: white">{{ device.name }}</span>
+                <el-radio title="点击选中实时数据" v-model="radio" :label="device.id">
+                  <span style="color: white">{{ device.deviceName }}</span>
                 </el-radio>
               </td>
               <td>
-                <button
-                  :class="
-                    device.type == '1'
-                      ? 'on-line'
-                      : device.type == '0'
+                <button :class="
+                  device.type == '1'
+                    ? 'on-line'
+                    : device.type == '0'
                       ? '2'
                       : 'unbound'
-                  "
-                >
-                  {{ device.type == '1' ? '在线':'离线' }}
+                ">
+                  {{ device.type == '1' ? '在线' : '离线' }}
                 </button>
               </td>
-              <td>{{ device.model }}</td>
-              <td>{{ device.ID }}</td>
-              <td :title="device.remarks">{{ device.remarks }}</td>
-              <td class="record">
-                <v-edit :editTitle="device.name " editType="采集器" :editList="editList" :Id="device.id"></v-edit>
-                <v-delect :delectTitle="device.name " delectType="采集器" :delectId="device.id"></v-delect>
-                <v-details :detailTitle="device.name" :model="device.model" :deviceId="device.ID" :remarks="device.remarks"></v-details>
+              <td>{{ device.deviceId }}</td>
+              <td>{{ device.linkType }}</td>
+              <td>{{ device.timescale }}</td>
+              <td>
+                <v-ellipsis :index="index" :curDeviceId="device.id" :curDeviceName="device.deviceName" :cueDeviceNum="device.deviceId" @showEditBoxFn="receive"></v-ellipsis>
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="echart_box">
-          <div id="echart"></div>
-        </div>
+        <v-echart></v-echart>
       </div>
       <div class="right">
         <v-latestNews></v-latestNews>
         <realTime></realTime>
-        <dv-border-box-12
-          style="height: 300px; width: 320px; margin-top: 10px;margin-right: 60px; "
-          class="dv12"
-        >
+        <dv-border-box-12 style="height: 300px; width: 320px; margin-top: 10px;margin-right: 60px; " class="dv12">
           <div class="caozuo">
             <i class="iconfont icon-caozuojilu"></i><span>操作记录</span>
           </div>
@@ -83,290 +70,41 @@
         </dv-border-box-12>
       </div>
     </div>
+    <v-editDevice deviceType='采集器'></v-editDevice>
+    <v-unbinding deviceType='采集器'></v-unbinding>
+    <v-newDelete deviceType='采集器'></v-newDelete>
+    <v-deviceDetails deviceType='采集器'></v-deviceDetails>
   </div>
 </template>
     
 <script>
 import realTime from "_c/realTime.vue";
-import {mapState} from 'vuex'
-// import requestsWeather from "../../../../utils/requestWeather"
-
+import echart from '_c/v-echart.vue'
+import { mapState } from 'vuex'
 export default {
   name: "app",
   components: {
     realTime,
+    'v-echart':echart
   },
   data() {
     return {
+      isOperation: false,
+      curOperationIndex: '',
       radio: 0,
       delectTitle: "设备",
       device: { name: "", type: "", model: "", ID: "", operation: "" },
-      showEditItem: false,
       editTitle: "采集器名称",
-      showDetaile: false,
       detailTitl: "台创园采集器",
-      showAddBox: false,
       addTitle: "采集器",
-      editType:'采集器',
-      editList:["设备名称","设备ID","设备型号"],
-      option: {
-        title: {
-          text: "历史曲线",
-          textStyle: {
-            color: "rgba(255, 255, 255, 1)",
-          },
-        },
-        // 线条颜色
-        // lineStyle:{color : "#555"},
-        // 显示
-        tooltip: {
-          trigger: "axis",
-        },
-        legend: {
-          textStyle: {
-            // 折线标题
-            color: "rgba(255, 255, 255, 1)",
-          },
-          left: "85px",
-          data: [
-            "空气温度",
-            "空气湿度",
-            "光照度",
-            "二氧化碳浓度",
-            "基质温度",
-            "基质湿度",
-            "基质pH值",
-            "基质EC值",
-          ],
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          // containLabel显示x轴的刻度
-          containLabel: true,
-        },
-        // 下载
-        // toolbox: {
-        //   feature: {
-        //     saveAsImage: {},
-        //   },
-        // },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: [
-            "0:00",
-            "3:00",
-            "6:00",
-            "9:00",
-            "12:00",
-            "15:00",
-            "18:00",
-            "21:00",
-            "24:00",
-          ],
-          axisLabel: {
-            show: true,
-            textStyle: {
-              color: "rgba(255, 255, 255, 0.45)",
-            },
-          },
-        },
-        yAxis: {
-          splitLine: {
-            //分割线配置
-            show: true,
-            lineStyle: {
-              color: "rgba(255, 255, 255, 0.15)",
-            },
-          },
-          type: "value",
-          axisLabel: {
-            show: false,
-            textStyle: {
-              color: "rgba(255, 255, 255, 0.45)",
-            },
-          },
-          axisLine: {
-            show: false, //是否显示轴线
-            lineStyle: {
-              color: "rgba(255, 255, 255, 0.15)", //刻度线的颜色
-            },
-          },
-        },
-        series: [
-          {
-            name: "空气温度",
-            type: "line",
-            stack: "Total",
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: "空气湿度",
-            type: "line",
-            stack: "Total",
-            data: [220, 182, 191, 234, 290, 330, 310],
-          },
-          {
-            name: "光照度",
-            type: "line",
-            stack: "Total",
-            data: [150, 232, 201, 154, 190, 330, 410],
-          },
-          {
-            name: "二氧化碳浓度",
-            type: "line",
-            stack: "Total",
-            data: [320, 332, 301, 334, 390, 330, 320],
-          },
-          {
-            name: "基质温度",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-          },
-          {
-            name: "基质湿度",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-          },
-          {
-            name: "基质pH值",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-          },
-          {
-            name: "基质EC值",
-            type: "line",
-            stack: "Total",
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-          },
-        ],
-      },
-      numberData: [
-        {
-          number: {
-            number: [15],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "空气温度",
-          unit: "°C",
-        },
-        {
-          number: {
-            number: [1144],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "空气湿度",
-          unit: "%",
-        },
-        {
-          number: {
-            number: [361],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "光照度",
-          unit: "hPa",
-        },
-        {
-          number: {
-            number: [157],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "二氧化碳浓度",
-          unit: "Lux",
-        },
-        {
-          number: {
-            number: [157],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "基质温度",
-          unit: "°C",
-        },
-        {
-          number: {
-            number: [157],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "基质湿度",
-          unit: "%",
-        },
-        {
-          number: {
-            number: [157],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "基质pH值",
-          unit: "pH",
-        },
-        {
-          number: {
-            number: [157],
-            toFixed: 1,
-            textAlign: "left",
-            content: "{nt}",
-            style: {
-              fontSize: 24,
-            },
-          },
-          text: "基质EC值",
-          unit: "uS/cm",
-        },
-      ],
+      editType: '采集器',
+      editList: ["设备名称", "设备ID", "设备型号"],
+      collectorList: [],
       isCheckItem: false,
       hasNoSel: false,
-      showDeleComfirm: false,
     };
   },
   methods: {
-    // 全选
-    // allCheck() {
-    //   console.log(this.$refs.checkAll.checked);
-    //   if (this.$refs.checkAll.checked) {
-    //     this.isCheckItem = true;
-    //   } else {
-    //     this.isCheckItem = false;
-    //   }
-    // },
     // 单选
     itemCheck() {
       let itemBoxArray = this.$refs.checkItem;
@@ -376,44 +114,42 @@ export default {
           console.log(index);
           this.hasNoSel = true;
         }
-        // 全选后取消一个单选，不勾选全选框
-        // if(this.isCheckItem && element.checked){
-        // this.$refs.checkAll.checked = false
-        // return
-        // }
       });
     },
+    receive(){
+      this.$store.commit("isShoweditBox");
+    },
     edit() {
-      this.showEditItem = true;
+      this.$store.commit("isShoweditBox");
     },
     delect() {
-      this.showDeleComfirm = true;
     },
     detail() {
-      this.showDetaile = true;
     },
     add() {
-      this.showAddBox = true;
     },
-    // async getWeather(){
-    //   let data= {city:"南京"}
-    //   const reqFindWeather = () => requestsWeather({method:'GET',url:'/simpleWeather',data})
-    //   let res = await reqFindWeather()
-    //   if(res.error_code == 0){
-    //     console.log('获取天气结果',res)
-    //   }
-    // }
+    async getDeviceList() {
+      await this.$store.dispatch('device/findDevice', {
+        type: "1",
+        binding: "1",
+        bindingId: sessionStorage.getItem("teacherId"),
+        projectId: this.$route.query.projectId
+      })
+    },
+    show(index) {
+      this.isOperation = true
+      this.curOperationIndex = index
+    },
+    hide(index) {
+      this.isOperation = false
+      this.curOperationIndex = index
+    }
   },
-  computed:mapState({
-    collectorList:state => state.caijiqi.collectorList
+  computed: mapState({
+    deviceList: state => state.device.deviceList
   }),
-  beforeMount(){
-    this.$store.dispatch('caijiqi/findCollector')
-  },
-  mounted() {
-    var myChart = this.$echarts.init(document.getElementById("echart"));
-    myChart.setOption(this.option);
-    this.$store.dispatch('caijiqi/findCollector')
+  beforeMount() {
+    this.getDeviceList()
   },
 };
 </script>
@@ -446,13 +182,46 @@ thead {
 thead tr th {
   text-align: left;
   line-height: 40px;
+
   &:last-child {
     display: flex;
   }
 }
 
 .record {
-  display: flex;
+  position: absolute;
+
+  span {
+    font-size: 25px;
+    font-weight: 900px;
+    letter-spacing: 2px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .operationList {
+    width: 130px;
+
+    li {
+      font-size: 15px;
+      background: rgba(18, 142, 232, 0.34);
+      padding-left: 5px;
+      line-height: 30px;
+
+      &:hover {
+        cursor: default;
+        background: rgba(18, 142, 232, 0.5);
+      }
+
+      &:active {
+        font-size: 12px;
+      }
+    }
+
+  }
+
 }
 
 tbody {
@@ -469,6 +238,7 @@ tbody tr td {
   &:first-child {
     padding-left: 10px;
   }
+
   text-align: top;
   padding-top: 15px;
   padding-left: 5px;
@@ -479,10 +249,9 @@ tbody tr td {
 
 table thead,
 tbody tr,
-tfoot tr,
 thead tr {
   display: table;
-  height: 40px;
+  // height: 40px;
   width: 100%;
   table-layout: fixed;
 }
@@ -563,21 +332,6 @@ thead tr {
   @include status();
 }
 
-.echart_box {
-  position: absolute;
-  padding-top: 20px;
-  padding-left: 5px;
-  margin-top: 10px;
-  height: 310px;
-  width: 860px;
-  background-image: url("../../../../assets/images/echart.png");
-  background-size: 860px 310px;
-}
-
-#echart {
-  height: 250px;
-  width: 850px;
-}
 
 .curData {
   background-image: url("../../../../assets/images/echart.png");
@@ -617,7 +371,7 @@ thead tr {
 
 .bottom-data {
   .item-box {
-    & > div {
+    &>div {
       padding-left: 90px;
     }
 
@@ -744,6 +498,7 @@ thead tr {
 
 .right {
   margin-left: 10px;
+
   .tips {
     padding: 10px;
     color: #fff;

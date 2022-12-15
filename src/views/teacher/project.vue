@@ -58,7 +58,7 @@ export default {
 
     },
     toProject() {
-      // this.reload()
+      this.reload()
       this.$router.push({
         path: "/teacherPage/projectTable",
       });

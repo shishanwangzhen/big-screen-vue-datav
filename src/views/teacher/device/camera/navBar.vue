@@ -116,6 +116,7 @@
                     position: absolute;
                     background-image: url("../../../../assets/images/cameraImg.png") ;
                     background-repeat: no-repeat;
+                    background-size: 100px 150px;
                     bottom: 0;
                     right: 5px;
                 }

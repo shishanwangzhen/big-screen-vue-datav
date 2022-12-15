@@ -29,71 +29,7 @@
           <i class="iconfont icon-shuiweitu"></i>
           <span>实时数据</span>
         </div>
-        <!-- <div class="real_time_data_content">
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom air_temperature">
-              <span class="">空气温度</span>
-            </div>
-            <div class="sonleft air_temperature"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom air_humidity">
-              <span class="">空气湿度</span>
-            </div>
-            <div class="sonleft air_humidity"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom Illuminance"><span>光照度</span></div>
-            <div class="sonleft Illuminance"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom dioxide_concentration">
-              <span>二氧化碳浓度</span>
-            </div>
-            <div class="sonleft dioxide_concentration"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom matrix_temperature"><span>基质温度</span></div>
-            <div class="sonleft matrix_temperature"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom matrix_humidity"><span>基质湿度</span></div>
-            <div class="sonleft matrix_humidity"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom matrix_pH"><span>基质pH值</span></div>
-            <div class="sonleft matrix_pH"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-          <div class="box">
-            <div class="top"><span>23°C</span></div>
-            <div class="bottom matrix_EC"><span>基质EC值</span></div>
-            <div class="sonleft matrix_EC"></div>
-            <div class="sonright"></div>
-            <span class="check">查看</span>
-          </div>
-        </div> -->
-      </div>
+  </div>
     </div>
   </div>
 </template>

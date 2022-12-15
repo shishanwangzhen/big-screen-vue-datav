@@ -3,13 +3,13 @@
         <div class="top">
             <div class="search">
                 <select name="" class="configure">
-                    <option value="" selected>联通控制器1</option>
-                    <option value="">2</option>
-                    <option value="">2</option>
-                    <option value="">2</option>
+                    <option value="" selected>采集设备</option>
+                    <option value="">控制设备</option>
+                    <option value="">视频设备</option>
+                    <option value="">监控设备</option>
                 </select>
             </div>
-            <div class="addSensor">复制所选控制器通道</div>
+            <!-- <div class="addSensor">复制所选控制器通道</div> -->
             <div class="delectWays">删除所选通道</div>
         </div>
 
@@ -24,7 +24,10 @@
                     <th>通道名</th>
                     <th>开启指令</th>
                     <th>关闭指令 </th>
-                    <th>操作</th>
+                    <th>
+                        操作
+                        <v-addDevice></v-addDevice>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -57,7 +60,7 @@ export default {
             delectTitle: "通道",
             editTitle: "通道信息",
             editType: "通道配置",
-            editList:['通道名','开启指令','关闭指令'],
+            editList: ['通道名', '开启指令', '关闭指令'],
             checkAll: false,
             checkedPassageway: [],
             label: '',
@@ -335,12 +338,15 @@ thead tr {
         .addSensor:active {
             font-size: 18px;
         }
-        .delectWays{
+
+        .delectWays {
             color: red;
             @include ways();
-            &:active{
+
+            &:active {
                 font-size: 18px;
             }
+
             width:150px;
             background-size: 150px 50px;
         }

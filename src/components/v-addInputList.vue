@@ -8,18 +8,19 @@
     <div class="containBox" v-if="isShowCaiijiqiItem">
       <span v-if="addTitle == '采集器'">采集器</span>
       <span v-else>控制器</span>
-      <select class="itemNo addcommon" v-model="curControl">
+      <select class="itemNo addcommon" v-model="curdeviceId">
         <option value="" disabled selected v-if="addTitle == '采集器'">选择采集器</option>
         <option value="" disabled selected v-else>选择控制器</option>
+        <option v-for="item in deviceList" :key="item.id" :value="item.id">{{ item.deviceName }}</option>
       </select>
     </div>
-    <div class="containBox" v-if="isShowCaiijiqiItem">
+    <!-- <div class="containBox" v-if="isShowCaiijiqiItem">
       <span>解码器</span>
       <select class="itemNo addcommon" v-model="curDecoder">
         <option value="" disabled selected>选择解码器</option>
-        <option v-for="item in decoderArr" :key="item.id" value="item.id">{{item.name}}</option>
+        <option v-for="item in decoderArr" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-    </div>
+    </div> -->
     <div class="containBox" v-if="addTitle == '学生'">
       <span>学生选择</span>
       <select class="itemNo addcommon" v-model="curStudentId">
@@ -39,7 +40,7 @@
     </div>
     <div class="containBox" v-if="desp">
       <span>描述</span>
-      <div contenteditable="true" class="describe addcommon"></div>
+      <textarea class="describe addcommon" v-model="remarks"></textarea>
     </div>
     <div class="selctType">
       <button @click="cancel">取消</button>
@@ -60,14 +61,15 @@ export default {
       desp: false,
       curCreator: sessionStorage.getItem("teacherAccount"),
       adminId: sessionStorage.getItem("teacherId"),
-      projectId: sessionStorage.getItem("projectId"),
+      projectId: this.$route.query.projectId,
       selectAdmin: "",
       addListArr: [],
       addListObj: {},
       projectNameArr: [],
       projectIdArr: [],
-      curDecoder:'',
-      curControl:'',
+      curDecoder: '',
+      curdeviceId: '',
+      remarks: '',
       fn: function async(addListObj, addListArr) {
         Object.keys(addListObj).map((i, index) => {
           return (addListObj[i] = addListArr[index]);
@@ -98,6 +100,7 @@ export default {
         // 将数组的值一一填到对象中
         this.fn(this.addListObj, this.addListArr);
         this.addListObj["creatorId"] = this.adminId;
+        this.addListObj["info"] = this.remarks;
         if (
           this.addListObj.name !== "" &&
           this.addListObj.number !== "" &&
@@ -129,6 +132,7 @@ export default {
         this.fn(this.addListObj, this.addListArr);
         this.addListObj["projectId"] = this.projectId;
         this.addListObj["creatorId"] = this.adminId;
+        this.addListObj["info"] = this.remarks;
         if (
           this.addListObj.name !== "" &&
           this.addListObj.number !== "" &&
@@ -142,7 +146,7 @@ export default {
           this.$emit("cancel", false);
           await this.$store.dispatch("userManagement/findGroup", {
             creatorId: sessionStorage.getItem("teacherId"),
-            projectId: sessionStorage.getItem("projectId"),
+            projectId: this.$route.query.projectId,
           });
         } else {
           this.$message({
@@ -174,25 +178,98 @@ export default {
             {
               status: 1,
               groupId: sessionStorage.getItem("groupId"),
-              projectId: sessionStorage.getItem("projectId"),
+              projectId: this.$route.query.projectId,
             },
           ]);
         }
       }
       if (this.addTitle == "采集器") {
-        let dom = this.$refs.getValue;
-        console.log('采集器dom', dom)
-        dom.forEach((element) => {
-          this.addListArr.push(element.value);
-        });
+        await this.$store.dispatch("device/updateDeviceBinding", {
+          binding: '1',
+          ids: [this.curdeviceId],
+          projectId: this.$route.query.projectId,
+          bindingId: sessionStorage.getItem("teacherId")
+        })
+      //   if (this.remarks !== "" || this.curDecoder !== "") {
+      //     await this.$store.dispatch("device/updateDevice", {
+      //       decoderId: this.curDecoder,
+      //       remarks: this.remarks,
+      //       creatorId: sessionStorage.getItem("teacherId"),
+      //       projectId: this.$route.query.projectId,
+      //       id: this.curdeviceId
+      //     })
+      //   }
+        await this.$store.dispatch('device/findDevice', {
+          type: "1",
+          binding: "1",
+          bindingId: sessionStorage.getItem("teacherId"),
+          projectId: this.$route.query.projectId
+        })
+      }
+      if (this.addTitle == "采集器解码器") {
         this.addListObj = {
-          name: "",
-          number: "",
-          model: "",
-          decoderId: "",
-          remarks:''
+          number: '',
+          name: '',
+          path: '',
+          port: '',
+          model: '',
+          manufacturer: '',
+          agreement: '',
+          remarks: ''
         }
-        await this.$store.dispatch('caijiqi/insertCollector', this.addListObj)
+        let dom = this.$refs.getValue;
+        dom.forEach(el => {
+          this.addListArr.push(el.value);
+        })
+        this.fn(this.addListObj, this.addListArr);
+        this.addListObj["type"] = "1"
+        this.addListObj["creatorId"] = sessionStorage.getItem('teacherId')
+        let haveEmpty = this.addListArr.some(function (elem) {
+          return elem == "";
+        });
+        if (!haveEmpty) {
+          await this.$store.dispatch("decoder/insertDecoder", this.addListObj)
+          this.addListArr = []
+        } else {
+          this.$message({
+            message: "输入框未填写完",
+            type: "warning"
+          })
+        }
+      }
+      if (this.addTitle == "控制器解码器") {
+        this.addListObj = {
+          number: '',
+          name: '',
+          path: '',
+          port: '',
+          model: '',
+          manufacturer: '',
+          agreement: '',
+          remarks: ''
+        }
+        let dom = this.$refs.getValue;
+        dom.forEach(el => {
+          this.addListArr.push(el.value);
+
+        })
+        this.fn(this.addListObj, this.addListArr);
+        this.addListObj["type"] = "2"
+        this.addListObj["creatorId"] = sessionStorage.getItem('teacherId')
+        let haveEmpty = this.addListArr.some(function (elem) {
+          return elem == "";
+        });
+        if (!haveEmpty) {
+          await this.$store.dispatch("decoder/insertDecoder", this.addListObj)
+          await this.$store.dispatch('decoder/findDecoder', "2")
+          this.addListArr = []
+          this.reload()
+        } else {
+          this.$message({
+            message: "输入框未填写完",
+            type: "warning"
+          })
+        }
       }
     },
     async getStudentList() {
@@ -210,6 +287,7 @@ export default {
     studentList: (state) => state.userManagement.studentList,
     groupInfo: (state) => state.userManagement.groupArr,
     decoderArr: state => state.decoder.decoderArr,
+    deviceList: state => state.notImportedDevice.deviceList
   }),
   beforeMount() {
     if (this.addTitle == "采集器") {
@@ -249,7 +327,13 @@ export default {
       this.getStudentList();
     }
     if (this.addTitle == "采集器") {
-      this.$store.dispatch('decoder/findDecoder')
+      // 查询当前项目下的采集器
+      this.$store.dispatch('notImportedDevice/findDevice', {
+        type: "1",
+        binding: "0",
+      })
+      // 查询当前项目下采集器的解码器
+      // this.$store.dispatch('decoder/findDecoder', "1")
     }
   },
 };
@@ -327,6 +411,7 @@ export default {
   }
 
   .describe {
+    padding: 5px;
     height: 126.35px;
     white-space: pre-line;
     overflow-y: scroll;

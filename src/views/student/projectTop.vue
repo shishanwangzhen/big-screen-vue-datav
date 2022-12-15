@@ -27,7 +27,8 @@
       {{ nowWeek }} <span>{{ datetime }}</span>
     </span>
     <div style="display:flex">
-      <v-ordinaryNav></v-ordinaryNav>
+      <v-ordinaryNav v-if="false"></v-ordinaryNav>
+      <v-superNav></v-superNav>
       <router-view></router-view>
     </div>
     
@@ -36,10 +37,12 @@
 
 <script>
 import ordinaryNav from './ordinaryStudent/navigationBar'
+import superNav from './superStudent/navigationBar.vue'
 export default {
   inject: ["reload"],
   components:{
-    'v-ordinaryNav':ordinaryNav
+    'v-ordinaryNav':ordinaryNav,
+    'v-superNav':superNav
   },
   data() {
     return {

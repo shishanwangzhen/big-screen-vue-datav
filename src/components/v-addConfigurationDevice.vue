@@ -1,31 +1,23 @@
 <template>
     <div v-if="isActive">
         <div class="editBox">
-            <div class="projectNameTitele">添加设备</div>
+            <div class="projectNameTitele">编辑-设备</div>
             <div class="containBox">
                 <span>设备类型</span>
                 <select class="itemNo addcommon" v-model="curDeviceType">
                     <option value="" disabled selected>选择设备类型</option>
-                    <option v-for="(item, index) in deviceType" :key="index">{{ item }}</option>
+                    <option v-for="(item, index) in deviceType" :key="index" :value="(index + 1)">{{ item }}</option>
                 </select>
             </div>
             <div class="containBox">
                 <span>设备名称</span>
-                <input class="itemNo common" />
+                <input class="itemNo common" v-model="deviceName" />
             </div>
-            <!-- <div class="containBox">
-                <span>设备ID</span>
-                <input class="itemNo common" />
-            </div>
-            <div class="containBox">
-                <span>设备型号</span>
-                <input class="itemNo common" />
-            </div> -->
             <div class="containBox">
                 <span>序列号</span>
-                <select class="itemNo addcommon" v-model="curAgreementType">
+                <select class="itemNo addcommon" v-model="serialNumber">
                     <option value="" disabled selected>选择产品序列号</option>
-                    <option v-for="(item, index) in serialNumber" :key="index">{{ item }}</option>
+                    <option v-for="(item, index) in deviceNumberList" :key="index">{{ item }}</option>
                 </select>
             </div>
             <div class="containBox">
@@ -37,49 +29,57 @@
             </div>
             <div class="containBox">
                 <span>上报周期</span>
-                <input class="itemNo common" placeholder="单位为秒" />
+                <input type="number" class="itemNo common" placeholder="单位为秒" v-model="timescale" />
             </div>
             <div class="containBox">
                 <span>传感器</span>
                 <button class="btn" @click="add">添加</button>
-                <input class="addNumber" v-model="addNum" />
-                <button class="btn" @click="(count = Number(count) + Number(addNum),num += Number(addNum))">批量添加</button>
+                <input class="addNumber" v-model="addNum" type="number" />
+                <button class="btn" @click="sum">批量添加</button>
                 <span>当前数量：{{ num }}</span>
             </div>
             <ul class="describe" ref="contentBox">
                 <li v-for="( item, index) in count" :key="item" ref="clearAll">
                     <div class="list">
-                        <input class="addNumber" :value="`传感器-${item}`" />
+                        <input class="addNumber"  ref="sensorName" placeholder="传感器名称"/>
                         <select class="addNumber long" @change="curData(index)" ref="curSelectData">
-                            <option value="" disabled selected>选择数据类型</option>
-                            <option v-for="(item, index) in dataType" :key="index">{{ item }}</option>
+                            <option value="" disabled selected>选择传感器类型</option>
+                            <option v-for="(item, index) in dataType" :key="index" :value="index + 1">{{ item }}</option>
                         </select>
-                        <select class="addNumber long" :disabled="curDataArr.includes(index) ? false : true">
+                        <select class="addNumber long" :disabled="curDataArr[index] == '1' ? false : true"
+                            @change="getDecimals(index)" ref="curDecimals">
                             <option value="" disabled selected>选择小数位</option>
-                            <option v-for="(item, index) in decimals" :key="index">{{ `${item}(小数位)` }}</option>
+                            <option v-for="(item, index) in decimals" :key="index" :value="item">{{ `${item}(小数位)` }}
+                            </option>
                         </select>
-                        <input class="addNumber" placeholder="单位" />
+                        <input class="addNumber" placeholder="单位" :disabled="curDataArr[index] == '1' ? false : true"
+                            ref="curUnit" />
                         <!-- curDataArr存放的是下拉框选择为数值型的索引 如果当前索引存在则可以点击More，显示添加映射值 -->
-                        <button class="btn" :disabled="curDataArr.includes(index) ? false : true"
-                            @click="isShowMore(index)">More...</button>
+                        <!-- <button class="btn" :disabled="curDataArr[index] == '数值型' ? false : true"
+                            @click="isShowMore(index)">More...</button> -->
                         <!-- 删除相应的行 -->
                         <button class="btn" @click="clear(index)">删除</button>
                     </div>
-                    <ul v-if="curIndex.includes(index)" class="more">
+                    <ul v-if="(curIndex.includes(index) && curDataArr[index] == '1' && showMore)" class="more">
                         <li class="mappingBox">
                             <span>映射值</span>
                             <!-- 是否显示映射值标题 -->
-                            <span v-show="hasUpperValueArr.includes(index)">{{ hasUpperValueArr.includes(index) ?`(${upperValueArr[index].upperValue1},${upperValueArr[index].upperValue2}=>${upperValueArr[index].upperValue3},${upperValueArr[index].upperValue4})`: null
+                            <span v-show="hasUpperValueArr.includes(index)">{{ hasUpperValueArr.includes(index)
+                                    ?
+                                    `(${upperValueArr[index].upperValue1},${upperValueArr[index].upperValue2}=>${upperValueArr[index].upperValue3},${upperValueArr[index].upperValue4})`
+                                    :
+                                    null
                             }}</span>
                             <div class="operation">
                                 <span class="add" @click="showUpper(index)">添加上行映射值</span>
                                 <!-- 删除映射值标题 -->
                                 <span class="delete" @click="deleteCurUpperValue(index)">删除</span>
                             </div>
-                            <div class="mappingValue" ref="upperValue" v-show="(addUpperArr.includes(index) && isShowUpperList)">
-                                <input type="text" v-model="upperValueArr[index].upperValue1"> - <input type="text"
-                                    v-model="upperValueArr[index].upperValue2"> => <input type="text"
-                                    v-model="upperValueArr[index].upperValue3"> - <input type="text"
+                            <div class="mappingValue" ref="upperValue"
+                                v-show="(addUpperArr.includes(index) && isShowUpperList)">
+                                <input type="number" v-model="upperValueArr[index].upperValue1"> - <input type="number"
+                                    v-model="upperValueArr[index].upperValue2"> => <input type="number"
+                                    v-model="upperValueArr[index].upperValue3"> - <input type="number"
                                     v-model="upperValueArr[index].upperValue4">
                                 <button @click="showUpperValue(index)">确定</button>
                             </div>
@@ -87,17 +87,22 @@
                         <li class="mappingBox">
                             <span>映射值</span>
                             <!-- 是否显示映射值标题 -->
-                            <span v-show="hasBottomValueArr.includes(index)">{{ hasBottomValueArr.includes(index) ?`(${bottomValueArr[index].bottomValue1},${bottomValueArr[index].bottomValue2}=>${bottomValueArr[index].bottomValue3},${bottomValueArr[index].bottomValue4})`: null
+                            <span v-show="hasBottomValueArr.includes(index)">{{ hasBottomValueArr.includes(index)
+                                    ?
+                                    `(${bottomValueArr[index].bottomValue1},${bottomValueArr[index].bottomValue2}=>${bottomValueArr[index].bottomValue3},${bottomValueArr[index].bottomValue4})`
+                                    :
+                                    null
                             }}</span>
                             <div class="operation">
                                 <span class="add" @click="showBottom(index)">添加下行映射值</span>
                                 <!-- 删除映射值标题 -->
                                 <span class="delete" @click="deleteCurBottomValue(index)">删除</span>
                             </div>
-                            <div class="mappingValue" ref="upperValue" v-show="(addBottomArr.includes(index) && isShowBottomList)">
-                                <input type="text" v-model="bottomValueArr[index].bottomValue1"> - <input type="text"
-                                    v-model="bottomValueArr[index].bottomValue2"> => <input type="text"
-                                    v-model="bottomValueArr[index].bottomValue3"> - <input type="text"
+                            <div class="mappingValue" ref="upperValue"
+                                v-show="(addBottomArr.includes(index) && isShowBottomList)">
+                                <input type="number" v-model="bottomValueArr[index].bottomValue1"> - <input
+                                    type="number" v-model="bottomValueArr[index].bottomValue2"> => <input type="number"
+                                    v-model="bottomValueArr[index].bottomValue3"> - <input type="number"
                                     v-model="bottomValueArr[index].bottomValue4">
                                 <button @click="showBottomValue(index)">确定</button>
                             </div>
@@ -124,14 +129,15 @@ export default {
             remarks: '',
             paramsObj: {},
             curDeviceType: '',
-            deviceType: ['采集设备', '控制设备', '视频设备', '被控设备', '虚拟设备'],
+            deviceType: ['采集设备', '控制设备', '被控设备', '视频设备', '虚拟设备'],
             agreementType: ["HTTP", "MQTT", "CoAP", "TCP"],
-            dataType: ["数值型", "开关型(可操作)", "定位型", "图片型", "开关型(不可操作)", "档位型", "视频型", "字符串"],
-            serialNumber:[1,2,3,4,5,6,7,8],
+            dataType: ["数值型", "开关型(可操作)", "定位型", "图片型", "开关型(不可操作)", "档位型", "视频", "字符串"],
+            serialNumber: "",
             decimals: ["0", "1", "2", "3", "4"],
-            addList: [],
-            // curDataType: '',
+            addList: {},
+            timescale: '',
             curAgreementType: '',
+            deviceName: '',
             count: 0,
             unit: '',
             addNum: 0,
@@ -143,35 +149,75 @@ export default {
             hasUpperValueArr: [],
             upperValueArr: [{}],
             addUpperArr: [],
-            addBottomArr:[],
+            addBottomArr: [],
             hasBottomValueArr: [],
             bottomValueArr: [{}],
-            isShowUpperList:false,
-            isShowBottomList:false,
+            decimalsArr: [],
+            isShowUpperList: false,
+            isShowBottomList: false,
             hasBottomValue: false,
-            num:0
+            num: 0,
         };
     },
     methods: {
         cancel() {
             this.$store.commit("isShowAddBox");
-            this.reload()
         },
-        async submit() {
-
+        submit() {
+            let reqFn = async () => {
+                await this.$store.dispatch("device/insertDevice", this.addList)
+                this.$store.commit("isShowAddBox");
+                await this.$store.dispatch("device/findDevice", {})
+            }
+            this.addList["creatorId"] = sessionStorage.getItem("teacherId")
+            this.addList["deviceName"] = this.deviceName
+            this.addList["type"] = this.curDeviceType
+            this.addList["deviceNo"] = this.serialNumber
+            this.addList["linkType"] = this.curAgreementType
+            this.addList["timescale"] = this.timescale
+            this.addList["sensorList"] = []
+            // 将传感器遍历到this.addList["sensorList"]
+            for (let i = 0; i < this.num; i++) {
+                this.addList["sensorList"].push({
+                    sensorName: this.$refs.sensorName[i].value,
+                    sensorType: this.$refs.curSelectData[i].value,
+                    decimal: this.$refs.curDecimals[i].value,
+                    unit: this.$refs.curUnit[i].value,
+                    ordernum: 1
+                })
+            }
+            try {
+                Object.keys(this.addList).forEach(el => {
+                    if (this.addList[el] == ' ') {
+                        throw new Error('设备类型、设备名称、序列号、协议类型、上报周期为必填项')
+                    }
+                })
+                this.addList["sensorList"].forEach(item => {
+                    if (item.sensorType == 1) {
+                        if (item.unit == '' || item.decimal == '' || item.decimal == 0) {
+                            throw new Error('传感器为数值型时，单位和小数位是必填字段且小数位不能为0')
+                        }
+                    }
+                })
+                reqFn()
+            } catch (e) {
+                this.$message.warning(e.message)
+                return
+            }
         },
         isShowMore(index) {
             // 将显示映射值的索引添加到curIndex
+            this.showMore = !this.showMore
             this.curIndex.push(index)
             // 保证上行映射值的索引与数组中的索引相同，才能拿到准确的值
-            this.$set(this.upperValueArr,index,{
+            this.$set(this.upperValueArr, index, {
                 id: index,
                 upperValue1: '',
                 upperValue2: '',
                 upperValue3: '',
                 upperValue4: ''
             })
-            this.$set(this.bottomValueArr,index,{
+            this.$set(this.bottomValueArr, index, {
                 id: index,
                 bottomValue1: '',
                 bottomValue2: '',
@@ -179,7 +225,7 @@ export default {
                 bottomValue4: ''
             })
         },
-        add(){
+        add() {
             this.count += 1
             this.num = this.$refs.contentBox.children.length + 1
         },
@@ -187,7 +233,7 @@ export default {
             // 删除相应的行
             this.$refs.contentBox.removeChild(this.$refs.clearAll[index])
             this.num = this.$refs.contentBox.children.length
-            if(this.num <= 0){
+            if (this.num <= 0) {
                 this.count = 0
             }
         },
@@ -201,7 +247,7 @@ export default {
                 // 点击确定显示、修改上行映射值标题
                 let res = this.hasUpperValueArr.includes(index)
                 // 确保点击 添加映射值只显示一行
-                if(!res){
+                if (!res) {
                     this.hasUpperValueArr.push(index)
                 }
             }
@@ -215,25 +261,25 @@ export default {
             } else {
                 // 点击确定显示、修改下行映射值标题
                 let res = this.hasBottomValueArr.includes(index)
-                if(!res){
+                if (!res) {
                     this.hasBottomValueArr.push(index)
                 }
             }
         },
-        deleteCurUpperValue(deleteIndex){
-            this.hasUpperValueArr.forEach((el,index) => {
-                if(el == deleteIndex){
-                    this.hasUpperValueArr.splice(index,1)
+        deleteCurUpperValue(deleteIndex) {
+            this.hasUpperValueArr.forEach((el, index) => {
+                if (el == deleteIndex) {
+                    this.hasUpperValueArr.splice(index, 1)
                 }
             })
         },
-        deleteCurBottomValue(deleteIndex){
-            this.hasBottomValueArr.forEach((el,index) => {
-                if(el == deleteIndex){
-                    this.hasBottomValueArr.splice(index,1)
+        deleteCurBottomValue(deleteIndex) {
+            this.hasBottomValueArr.forEach((el, index) => {
+                if (el == deleteIndex) {
+                    this.hasBottomValueArr.splice(index, 1)
                 }
             })
-            
+
         },
         // 点击  添加上行映射值
         // 将对应点击的添加上行映值索引添加到数组，用于判断是否显示当前的上行映值输入框
@@ -246,24 +292,48 @@ export default {
         // 点击  添加下行映射值
         showBottom(index) {
             this.addBottomArr.push(index)
-             // 控制下行映射值输入框的显示与关闭
+            // 控制下行映射值输入框的显示与关闭
             this.isShowBottomList = !this.isShowBottomList
 
         },
+        // 相应索引的传感器类型
         curData(index) {
-            // 获取对应选择数据类型下拉框的值
-            if (this.$refs.curSelectData[index].value == '数值型') {
-                this.curDataArr.push(index)
+            this.$set(this.curDataArr, index, this.$refs.curSelectData[index].value)
+            if (this.curDataArr[index] !== '1') {
+                this.$refs.curDecimals[index].value = 0
+            }
+        },
+        // 统计当前添加的传感器数量
+        sum() {
+            console.log('this.addNum', this.addNum)
+            if (this.addNum > 0) {
+                this.count = Number(this.count) + parseInt(this.addNum)
+                this.num = Number(this.num) + parseInt(this.addNum)
+            } else {
+                this.addNum = 0
+            }
+        },
+        // 当前的小数位,数据类型为数值型则是下拉框选择的小数位，如果数据类型为其他则小数位默认为0
+        getDecimals(index) {
+            if (this.curDataArr[index] == '数值型') {
+                this.$set(this.decimalsArr, index, this.$refs.curDecimals[index].value)
+            } else {
+                this.$set(this.decimalsArr, index, 0)
             }
         }
+
     },
     watch: {
         curDataType() {
         }
     },
     computed: mapState({
-        isActive: state => state.addBoxIsActive
+        isActive: state => state.addBoxIsActive,
+        deviceNumberList: state => state.device.deviceNumberList
     }),
+    beforeMount() {
+        this.$store.dispatch("device/deviceNumber")
+    }
 };
 </script>
 
@@ -345,8 +415,8 @@ export default {
 
     @mixin commonStyle {
         white-space: nowrap;
-        height: 30px;
-        line-height: 30px;
+        // height: 30px;
+        // line-height: 30px;
     }
 
 

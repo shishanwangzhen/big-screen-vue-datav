@@ -5,7 +5,7 @@ const state = {
     projectId:'',
     groupArr:[],
     code:'',
-    studentList:[],
+    studentList:[{}],
     addStudentList:[],
     curGroupId:''
 }
@@ -13,17 +13,10 @@ const state = {
 const mutations = {
     GETFINDGROUP(state,data){
         state.groupArr = []
-        if(data.resData.length !== 0){
-            let res = data.resData.map(el => {
-                state.groupArr.push({
-                    groupName:el.name,
-                    groudID:el.number,
-                    groupDesp:el.info,
-                    id:el.id
-                })
-                return res
-            })
-            sessionStorage.setItem('groupId',state.groupArr[0].id)
+        state.curGroupId = ''
+        if(data.resData.length > 0){
+            state.curGroupId = data.resData[0].id
+            state.groupArr = data.resData
         }
         state.projectId = data.projectId
     },
@@ -40,31 +33,23 @@ const mutations = {
         // 获取申请通过的学生列表
         if(data.type == 'apllicationLsit'){
             state.studentList = []
-            data.res.map(el => {
-                state.studentList.push({
-                    id:el.id,
-                    account:el.account
-                })
-            })
+            if(data.res.length > 0){
+              state.studentList = data.res  
+            }
         }
         //获取添加到项目组的学生列表
         if(data.type == 'addList'){
             state.addStudentList = []
-            data.res.map(el => {
-                state.addStudentList.push({
-                    id:el.id,
-                    account:el.account,
-                    role:el.role
-                })
-            })
+            if(data.res.length > 0){
+                state.addStudentList = data.res
+            }
         }
     },
     GETCHANGESTUDENTLIST(){
-        // state.code = data
     },
     GETUPDATEGROUPSTUDENT(){},
-    changeGroupId(state,id){
-        state.curGroupId = id
+    clearStudentList(state){
+        state.addStudentList = []
     }
 }
 
@@ -74,7 +59,7 @@ const actions = {
         let result = await reqFindGroup(JSON.stringify(data))
         if(result.errcode == 0){
             commit('GETFINDGROUP',{
-                projectId:data.data,
+                projectId:data.projectId,
                 resData:result.p2pdata
             })
             return 'ok'
@@ -95,7 +80,6 @@ const actions = {
     // 编辑项目组
     async updateGroup({commit},data){
         let result = await reqUpdateGroup(JSON.stringify(data))
-        console.log('result.errcode',result.errcode)
         if(result.errcode == 0){
             commit('GETUPDATEGROUP',result.errcode)
             return 'ok'

@@ -48,7 +48,7 @@ export default {
             }, 1000);
         },
     },
-    mounted() {
+    beforeMount() {
         this.getTime()
     },
 
@@ -56,27 +56,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-span {
-  font-size: 16.36px;
-  font-weight: 400;
+.tainqi {
+    color: rgb(255, 255, 255);
+    span {
+        font-size: 16px;
+        font-weight: 400;
+    }
 }
 
-.tainqi {
-  color: rgb(255, 255, 255);
-  float: right;
-  margin-top: 20px;
-  margin-right: 100px;
-}
 
 span span:nth-child(1) {
-  color: rgba(102, 255, 255, 1);
+    color: rgba(102, 255, 255, 1);
 }
 
 span span:nth-child(2) {
-  font-size: 20px;
-  font-weight: 500;
-  color: rgba(102, 255, 255, 1);
+    font-size: 20px;
+    font-weight: 500;
+    color: rgba(102, 255, 255, 1);
 }
-
-
 </style>

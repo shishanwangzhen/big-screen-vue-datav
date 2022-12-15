@@ -1,12 +1,15 @@
-import {reqFindDevice,reqInsertDevice,reqUpdateDeviceBinding,reqUpdateDeviceStatus,reqUpdateDevice} from '@/api/api'
+import {reqFindDevice,reqInsertDevice,reqUpdateDeviceBinding,reqDeleteDevice,reqUpdateDevice,reqDeviceNumber,reqUpdateDeviceBindingById,reqFindDeviceDetails} from '@/api/api'
 
 const state = {
  deviceList:[],
- code:''
+ code:'',
+ deviceNumberList:[],
+ deviceDetailsList:[]
 }
 
 const mutations = {
     GETFINDDEVICE(state,data){
+        state.deviceList = []
         if (data.length > 0) {
            state.deviceList = data 
         }
@@ -23,6 +26,16 @@ const mutations = {
     GETUPDATADEVICE(state,code){
         state.code = code
     },
+    GETDEVICENUMBER(state,data){
+        state.deviceNumberList = data
+    },
+    GETUNBINDING(state,code){
+        state.code = code
+    },
+    GEFINDDEVICEDETAILS(state,data){
+        state.deviceDetailsList = []
+        state.deviceDetailsList = data
+    }
 }
 
 const actions = {
@@ -58,7 +71,7 @@ const actions = {
     },
     // 删除设备
     async deleteDevice({commit},id){
-        let result = await reqUpdateDeviceStatus(id)
+        let result = await reqDeleteDevice(id)
         if(result.errcode == 0){
             commit('GETDELETEDEVICE',result.errcode)
             return 'ok'
@@ -74,6 +87,36 @@ const actions = {
             return 'ok'
         } else {
         return new Promise(new Error('failed to add device item'))
+        }
+    },
+    // 获取序列号
+    async deviceNumber({commit}){
+        let result = await reqDeviceNumber()
+        if(result.errcode == 0){
+            commit('GETDEVICENUMBER',result.p2pdata)
+            return 'ok'
+        } else {
+        return new Promise(new Error('failed to get device number item'))
+        }
+    },
+    // 解绑设备
+    async unbindingDevice({commit},id){
+        let result = await reqUpdateDeviceBindingById(id)
+        if(result.errcode == 0){
+            commit('GETUNBINDING',result.errcode)
+            return 'ok'
+        } else {
+        return new Promise(new Error('failed to unbinding device item'))
+        }
+    },
+    // 获取设备详情
+    async findDeviceDetails({commit},id){
+        let result = await reqFindDeviceDetails(id)
+        if(result.errcode == 0){
+            commit('GEFINDDEVICEDETAILS',result.p2pdata)
+            return 'ok'
+        } else {
+        return new Promise(new Error('failed to unbinding device item'))
         }
     },
 }

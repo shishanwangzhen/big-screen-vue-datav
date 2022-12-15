@@ -33,19 +33,13 @@ export default {
     getRes(res){
       this.isActive = res
     },
-    async getGroupList(){
-      await this.$store.dispatch('userManagement/findGroup',{
-        creatorId:sessionStorage.getItem('teacherId'),
-        projectId:sessionStorage.getItem('projectId')
-      })
-    }
+    
   },
   computed:mapState({
     addBoxIsActive: state =>state.addBoxIsActive,
     curAddTitle: state => state.curAddTitle
   }),
   mounted() {
-    this.getGroupList()
   }
 
 };
