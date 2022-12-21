@@ -123,8 +123,6 @@ export default {
     this.$store.dispatch('project/projectList')
   },
   mounted() {
-    var host = window.location.host;
-    console.log('host',host)
     const socket = new WebSocket(`ws://192.168.0.66:8081/socketServer/${sessionStorage.getItem('teacherId')}`)
     socket.addEventListener('open', function () {
       console.log('链接成功')

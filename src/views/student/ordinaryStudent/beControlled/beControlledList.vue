@@ -94,12 +94,12 @@
       }
     },
     watch: {
-      curIndexArr(newArr, oldArr) {
-          console.log("监控curIndexArr");
-          console.log("oldArr", oldArr, "newArr", newArr);
-        },
-      deep: true, // 是否开启深度监听
-      immediate: true, // 是否初始化时就执行一次
+      // curIndexArr(newArr, oldArr) {
+      //     console.log("监控curIndexArr");
+      //     console.log("oldArr", oldArr, "newArr", newArr);
+      //   },
+      // deep: true, // 是否开启深度监听
+      // immediate: true, // 是否初始化时就执行一次
       },
   };
   </script>

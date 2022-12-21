@@ -22,12 +22,10 @@
           <li class="list">{{ device.timescale }}</li>
           <li class="list">{{ new Date(device.createTime).toLocaleString() }}</li>
           <li>
-            <v-ellipsis :index="index" :curDeviceId="device.id" :curDeviceName="device.deviceName"
-              :cueDeviceNum="device.deviceId" @showEditBoxFn="receive"></v-ellipsis>
+            <v-ellipsis :index="index" :curDeviceId="device.id" :curDeviceName="device.deviceName" :curDeviceNum="device.deviceId"></v-ellipsis>
           </li>
         </ul>
       </div>
-
     </div>
     <v-editDevice deviceType='控制器'></v-editDevice>
     <v-unbinding deviceType='控制器'></v-unbinding>
@@ -48,9 +46,7 @@ export default {
     }
   },
   methods: {
-    receive() {
-      this.$store.commit("isShoweditBox");
-    },
+    
   },
   computed: mapState({
     deviceList: state => state.device.deviceList

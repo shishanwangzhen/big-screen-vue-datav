@@ -22,7 +22,7 @@
           <tbody>
             <tr v-for=" ( device, index) in deviceList" :key="device.id">
               <td>
-                <el-radio title="点击选中实时数据" v-model="radio" :label="device.id">
+                <el-radio title="点击查看传感器实时数据" v-model="curCellectId" :label="device.deviceId">
                   <span style="color: white">{{ device.deviceName }}</span>
                 </el-radio>
               </td>
@@ -41,7 +41,8 @@
               <td>{{ device.linkType }}</td>
               <td>{{ device.timescale }}</td>
               <td>
-                <v-ellipsis :index="index" :curDeviceId="device.id" :curDeviceName="device.deviceName" :cueDeviceNum="device.deviceId" @showEditBoxFn="receive"></v-ellipsis>
+                <v-ellipsis :index="index" :curDeviceId="device.id" :curDeviceName="device.deviceName"
+                  :curDeviceNum="device.deviceId"></v-ellipsis>
               </td>
             </tr>
           </tbody>
@@ -85,13 +86,13 @@ export default {
   name: "app",
   components: {
     realTime,
-    'v-echart':echart
+    'v-echart': echart
   },
   data() {
     return {
       isOperation: false,
       curOperationIndex: '',
-      radio: 0,
+      curCellectId: '',
       delectTitle: "设备",
       device: { name: "", type: "", model: "", ID: "", operation: "" },
       editTitle: "采集器名称",
@@ -102,6 +103,8 @@ export default {
       collectorList: [],
       isCheckItem: false,
       hasNoSel: false,
+      realDeviceList: {},
+      filterDeviceList:{}
     };
   },
   methods: {
@@ -116,7 +119,7 @@ export default {
         }
       });
     },
-    receive(){
+    receive() {
       this.$store.commit("isShoweditBox");
     },
     edit() {
@@ -145,12 +148,47 @@ export default {
       this.curOperationIndex = index
     }
   },
+  watch: {
+    curCellectId: {
+      handler(newDeviceId) {
+        // 返回匹配的实时数据
+        this.realDeviceList = this.realDeviceListMsg.filter(item => {
+          if (item.deviceId == newDeviceId) {
+            return item
+          }
+        })
+        this.$store.dispatch('device/findDeviceDetails', newDeviceId)
+          .then(device => {
+            this.filterDeviceList = this.realDeviceListMsg.filter(item => {
+              console.log('item.deviceId',item.deviceId)
+              console.log('device.deviceId',device.deviceId)
+              if (item.deviceId == device.id) {
+                return device
+              }
+            })
+            console.log('this.filterDeviceList',this.filterDeviceList)
+          })
+          .catch(err => {
+            console.log('获取采集设备详情错误', err)
+          })
+        // this.realSensorList = getRealSensorList
+        // console.log('getRealSensorList',getRealSensorList)
+      }
+    },
+    immediate: true
+  },
   computed: mapState({
-    deviceList: state => state.device.deviceList
+    deviceList: state => state.device.deviceList,
+    realDeviceListMsg: state => state.deviceList,
+    cellectId: state => state.device.cellectId,
+    deviceDetailsList: state => state.device.deviceDetailsList
   }),
   beforeMount() {
     this.getDeviceList()
   },
+  mounted() {
+    this.curCellectId = this.cellectId
+  }
 };
 </script>
     

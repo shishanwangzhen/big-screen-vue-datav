@@ -17,7 +17,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th>传感器节点</th>
+          <th>参数名</th>
           <th>中文显示</th>
           <th>英文显示</th>
           <th>单位</th>

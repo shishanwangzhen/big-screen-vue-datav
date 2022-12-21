@@ -18,7 +18,6 @@
             showinstructions:state => state.showinstructions
         }),
         mounted() {
-            console.log('wochulail')
         }
     }
 </script>

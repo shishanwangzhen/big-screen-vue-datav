@@ -2,11 +2,37 @@
     <div v-if="isActive">
         <div class="editBox">
             <div class="projectNameTitele">添加{{ addTitle }}</div>
-            <div class="containBox" v-for="(list, index) in addList" :key="index">
+            <!-- <div class="containBox" v-for="(list, index) in addList" :key="index">
                 <span>{{ list }}</span>
                 <input contenteditable="true" class="itemNo common" ref="inputList" />
+            </div> -->
+            <div class="containBox">
+                <span>传感器名称</span>
+                <input contenteditable="true" class="itemNo common" v-model="sensorName" />
             </div>
             <div class="containBox">
+                <span>传感器类型</span>
+                <select class="itemNo common" v-model="sensorType">
+                    <option value="" disabled selected>选择传感器类型</option>
+                <option :value="(index+1)" v-for="(item,index) in sensorTypeArr" :key="index">{{ item }}</option>
+            </select>
+            </div>
+            <div class="containBox">
+                <span>小数位</span>
+                <select class="itemNo common" v-model="decimals"  :disabled="sensorType == 1? false:true">
+                <option :value="item" v-for="item in decimalsArr" :key="item">{{item}}（位小数）</option>
+                <!-- <option value="0">0（位小数）</option>
+                <option value="1">1（位小数）</option>
+                <option value="2">2（位小数）</option>
+                <option value="3">3（位小数）</option>
+                <option value="4">4（位小数）</option> -->
+            </select>
+            </div>
+            <div class="containBox">
+                <span>单位</span>
+                <input contenteditable="true" class="itemNo common" v-model="unit" :disabled="sensorType == 1? false:true"/>
+            </div>
+            <!-- <div class="containBox">
                 <span>设备类型</span>
                 <select name="" id="" class="itemNo common" v-if="addTitle == '设备'" v-model="deviceType">
                     <option selected disabled>设备类型选择</option>
@@ -16,11 +42,11 @@
                     <option value="4">监控设备</option>
                     <option value="5">虚拟设备</option>
                 </select>
-            </div>
-            <div class="containBox">
+            </div> -->
+            <!-- <div class="containBox">
                 <span>描述</span>
                 <textarea class="describe common" v-model="remarks"></textarea>
-            </div>
+            </div> -->
             <div class="selctType">
                 <button @click="cancel">取消</button>
                 <button @click="submit" id="btn">确定</button>
@@ -39,7 +65,13 @@ export default {
         return {
             remarks: '',
             paramsObj: {},
-            deviceType: ''
+            deviceType: '',
+            sensorName:'',
+            sensorType:'',
+            decimals:0,
+            unit:'',
+            sensorTypeArr: ["数值型", "开关型(可操作)", "定位型", "图片型", "开关型(不可操作)", "档位型", "视频型", "字符串"],
+            decimalsArr:[0,1,2,3,4]
         };
     },
     methods: {
@@ -47,37 +79,7 @@ export default {
             this.$store.commit("isShowAddBox");
         },
         async submit() {
-            // if (this.addTitle == '设备') {
-            //     this.paramsObj = {
-            //         name: "",
-            //         number: "",
-            //         model:"",
-            //         type: "",
-            //         remarks: "",
-            //         binding:"0"
-            //     }
-            //     let textArr = this.$refs.inputList.map(el => {
-            //         return el.value
-            //     })
-            //     Object.keys(this.paramsObj).map((el, index) => {
-            //         this.paramsObj[el] = textArr[index]
-            //     })
-            //     this.paramsObj['type'] = this.deviceType
-            //     this.paramsObj['remarks'] = this.remarks
-            //     this.paramsObj['binding'] = "0"
-            //     this.paramsObj['creatorId'] = sessionStorage.getItem("teacherId")
-            //     if (this.paramsObj['type'] !== "" && this.paramsObj['name'] !== "" && this.paramsObj['number'] !== "") {
-            //         await this.$store.dispatch("device/insertDevice", this.paramsObj)
-            //         this.$store.commit("isShowAddBox");
-            //         await this.$store.dispatch("device/findDevice", {
-            //         })
-            //     } else {
-            //         this.$message({
-            //             message: "设备名称、设备ID、设备类型是必填项",
-            //             type: "warning",
-            //         });
-            //     }
-            // }
+
         },
     },
     computed: mapState({
@@ -90,8 +92,8 @@ export default {
 .editBox {
     z-index: 9001;
     width: 695px;
-    height: 465px;
-    background-size: 1150px 700px;
+    height: 400px;
+    background-size: 695px 400px;
     position: absolute;
     top: 50%;
     left: 50%;

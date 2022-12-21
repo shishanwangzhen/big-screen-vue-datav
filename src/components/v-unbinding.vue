@@ -62,10 +62,10 @@ export default {
         showunbinding: state => state.showunbinding
     }),
     beforeMount() {
-        this.$bus.$on("getDeviceMsg", this.getBusData())
+        this.$bus.$on("getDeviceMsg", this.getBusData)
     },
     destroyed(){
-        this.$bus.$off("getDeviceMsg", this.getBusData())
+        this.$bus.$off("getDeviceMsg", this.getBusData)
     }
 }
 </script>

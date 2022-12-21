@@ -6,7 +6,7 @@
           <option v-for="item in deviceList" :key="item.id" :value="item.deviceId">{{ item.deviceName }}</option>
         </select>
       </div>
-      <div class="addSensor">所有设备</div>
+      <!-- <div class="addSensor">所有设备</div> -->
       <div class="delectWays" @click="addBecontrol">
         <i class="iconfont icon-zengjia"></i> 添加设备
       </div>
@@ -17,7 +17,7 @@
           :key="sensorItem.id">
           <ul class="itemTop">
             <li :class="
-              type == '在线' ? 'on-line' : type == '离线' ? 'off-line' : ''
+              type == '在线' ? 'on-line' : type == '离线' ? 'off-line' : 'not-started'
             "></li>
             <li>{{ sensorItem.sensorName }}</li>
             <li><i class="iconfont icon-close"></i></li>
@@ -25,9 +25,8 @@
           <!-- 控制 -->
           <div v-show="curIndexArr.includes(`${sensorIndex + 1}-0`) ? true : false" class="common">
             <ul class="instructions">
-              <li v-for="(item, index) in instructions" :key="index">
-                {{ item }}
-              </li>
+              <li @click="open(sensorItem.id)">开启</li>
+              <li @click="close(sensorItem.id)">关闭</li>
             </ul>
             <div class="img">
               <img src="../../../../assets/images/becontrolImg.png" alt="" />
@@ -56,7 +55,11 @@
           <!-- 详情 -->
           <ul v-show="curIndexArr.includes(`${sensorIndex + 1}-2`) ? true : false" class="common details">
             <li>设备DI：{{ sensorItem.id }}</li>
-            <li>设备类型：{{sensorItem.sensorTypeId == 1 ? '数值型' : sensorItem.sensorTypeId == 2 ? '开关型（可操作）': sensorItem.sensorTypeId == 3 ? '定位型' : sensorItem.sensorTypeId == 4 ? '图片型' :sensorItem.sensorTypeId == 5 ? '开关型（不可操作）' : sensorItem.sensorTypeId == 6 ? '档位型' : sensorItem.sensorTypeId == 7 ? '视频' : sensorItem.sensorTypeId == 8 ? '字符串' : ''}}</li>
+            <li>设备类型：{{ sensorItem.sensorTypeId == 1 ? '数值型' : sensorItem.sensorTypeId == 2 ? '开关型（可操作）' :
+                sensorItem.sensorTypeId == 3 ? '定位型' : sensorItem.sensorTypeId == 4 ? '图片型' : sensorItem.sensorTypeId == 5
+                  ? '开关型（不可操作）' : sensorItem.sensorTypeId == 6 ? '档位型' : sensorItem.sensorTypeId == 7 ? '视频' :
+                    sensorItem.sensorTypeId == 8 ? '字符串' : ''
+            }}</li>
             <li>所属设备：{{ sensorItem.deviceName }}</li>
             <li>通道号：</li>
             <li>备注：</li>
@@ -88,18 +91,20 @@ export default {
   inject: ['reload'],
   data() {
     return {
-      type: "在线",
+      type: "",
       length: 15,
       spanContent: ["控制", "指令", "详情"],
       instructions: ["开启", "关闭", "暂停"],
-      addList: ['设备名称', '设备ID', '设备型号'],
+      addList: ['传感器名称', '传感器类型', '单位'],
       addTitle: '被控设备',
       curIndexArr: [],
       showCtronll: true,
       showInstructions: false,
       showDetails: false,
       curNum: '2',
-      curDeviceId: ''
+      curDeviceId: '',
+      deviceNo: '',
+      deviceDetailsList: []
     };
   },
   methods: {
@@ -121,26 +126,50 @@ export default {
     },
     addBecontrol() {
       this.$store.commit("isShowAddBox");
+    },
+    open(sensorId) {
+      this.$store.dispatch('device/switcherController', {
+        deviceNo: this.deviceNo,
+        sensorId,
+        switcher: 1,
+        userId: sessionStorage.getItem('teacherId')
+      })
+    },
+    close(sensorId) {
+      this.$store.dispatch('device/switcherController', {
+        deviceNo: this.deviceNo,
+        sensorId,
+        switcher: 0,
+        userId: sessionStorage.getItem('teacherId')
+      })
     }
   },
   mounted() {
     for (let i = 1; i <= this.length; i++) {
       this.curIndexArr.push(`${i}-0`);
     }
-    this.curDeviceId = this.deviceList[0].deviceId
+    if (this.deviceList.length > 0) {
+      this.curDeviceId = this.deviceList[0].deviceId
+    }
   },
   computed: mapState({
     deviceList: state => state.device.deviceList,
-    deviceDetailsList: state => state.device.deviceDetailsList
   }),
   watch: {
-    curIndexArr(newArr, oldArr) {
-      console.log("监控curIndexArr");
-      console.log("oldArr", oldArr, "newArr", newArr);
-    },
-    curDeviceId(newId) {
-      console.log('newId', newId)
-      this.$store.dispatch('device/findDeviceDetails', newId)
+    async curDeviceId(newId) {
+      let res = await this.$store.dispatch('device/findDeviceDetails', newId)
+      this.deviceDetailsList = res
+      try {
+        this.deviceList.forEach(el => {
+          // 获取当前下拉框的序列号
+          if (el.deviceId == this.curDeviceId) {
+            this.deviceNo = el.deviceNo
+            throw new Error('OK')
+          }
+        })
+      } catch (e) {
+        return
+      }
     },
     immediate: true, // 无论是否发生改变都执行一次
   },
@@ -283,6 +312,14 @@ export default {
 
         .on-line {
           background: rgba(9, 226, 248, 1);
+        }
+
+        .off-line {
+          background: rgba(255, 87, 51, 1);
+        }
+
+        .not-started {
+          background: rgb(218, 218, 218);
         }
       }
 

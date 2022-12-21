@@ -115,6 +115,22 @@ export default {
     arrDom.forEach(( item,index)=> {
       item.setAttribute('index',index)
     })
+  },
+  mounted() {
+    const socket = new WebSocket(`ws://192.168.0.66:8081/socketServer/${sessionStorage.getItem('teacherId')}`)
+    socket.addEventListener('open', function () {
+      console.log('链接成功')
+      // socket.send('客户端连接上服务端的socket')
+    })
+    socket.addEventListener('message', (event) => {
+      console.log('socketEvent', event.data)
+      this.$store.commit('getDeviceList',event.data)
+     
+    })
+    // 服务断开
+    socket.addEventListener('close', function () {
+      console.log('服务器断开连接')
+    })
   }
 };
 </script>

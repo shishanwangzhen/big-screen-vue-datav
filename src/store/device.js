@@ -1,10 +1,12 @@
-import {reqFindDevice,reqInsertDevice,reqUpdateDeviceBinding,reqDeleteDevice,reqUpdateDevice,reqDeviceNumber,reqUpdateDeviceBindingById,reqFindDeviceDetails} from '@/api/api'
+import {reqFindDevice,reqInsertDevice,reqUpdateDeviceBinding,reqDeleteDevice,reqUpdateDevice,reqDeviceNumber,reqUpdateDeviceBindingById,reqFindDeviceDetails,reqSwitcherController} from '@/api/api'
 
 const state = {
  deviceList:[],
  code:'',
  deviceNumberList:[],
- deviceDetailsList:[]
+ deviceDetailsList:[],
+ cellectId:''
+
 }
 
 const mutations = {
@@ -12,6 +14,7 @@ const mutations = {
         state.deviceList = []
         if (data.length > 0) {
            state.deviceList = data 
+           state.cellectId = data[0].deviceId
         }
     },
     GETINSERTDEVICE(state,code){
@@ -34,8 +37,14 @@ const mutations = {
     },
     GEFINDDEVICEDETAILS(state,data){
         state.deviceDetailsList = []
-        state.deviceDetailsList = data
-    }
+        if(data.length > 0){
+             state.deviceDetailsList = data
+        }
+       
+    },
+    GETSWITCHERCONTROLLER(state,code){
+        state.code = code
+    },
 }
 
 const actions = {
@@ -66,7 +75,7 @@ const actions = {
             commit('GETUPDATADEVICEBINDING',result.errcode)
             return 'ok'
         } else {
-        return new Promise(new Error('failed to add device item'))
+        return new Promise(new Error('failed to insert device item'))
         }
     },
     // 删除设备
@@ -76,7 +85,7 @@ const actions = {
             commit('GETDELETEDEVICE',result.errcode)
             return 'ok'
         } else {
-        return new Promise(new Error('failed to add device item'))
+        return new Promise(new Error('failed to delete device item'))
         }
     },
     // 修改设备 reqUpdateDevice
@@ -86,7 +95,7 @@ const actions = {
             commit('GETUPDATADEVICE',result.errcode)
             return 'ok'
         } else {
-        return new Promise(new Error('failed to add device item'))
+        return new Promise(new Error('failed to edit device item'))
         }
     },
     // 获取序列号
@@ -114,9 +123,19 @@ const actions = {
         let result = await reqFindDeviceDetails(id)
         if(result.errcode == 0){
             commit('GEFINDDEVICEDETAILS',result.p2pdata)
+            return result.p2pdata
+        } else {
+        return new Promise(new Error('failed to find device details item'))
+        }
+    },
+    // 设备开关下行控制 reqSwitcherController
+    async switcherController({commit},data){
+        let result = await reqSwitcherController(data)
+        if(result.errcode == 0){
+            commit('GETSWITCHERCONTROLLER',result.errcode)
             return 'ok'
         } else {
-        return new Promise(new Error('failed to unbinding device item'))
+        return new Promise(new Error('failed to switcher device item'))
         }
     },
 }

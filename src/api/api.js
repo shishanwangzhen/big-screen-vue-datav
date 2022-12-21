@@ -91,7 +91,8 @@ export const reqDeviceNumber = () => requests({method:'POST',url:'/core/deviceNu
 // 获取设备详情
 export const reqFindDeviceDetails = (id) => requests({method:'POST',url:`/core/Device/findDeviceByDeviceId?deviceId=${id}`})
 
-
+// 开关下行控制
+export const reqSwitcherController = (data) => requests({method:'POST',url:'/core/Device/switcherController',data})
 
 
 

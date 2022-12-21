@@ -79,6 +79,7 @@ export default {
     },
     beforeMount() {
         this.curProjectId = this.$route.query.projectId
+        this.$store.dispatch('project/projectList')
     },
     mounted() { }
 
